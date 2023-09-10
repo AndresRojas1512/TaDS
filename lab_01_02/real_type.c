@@ -25,8 +25,8 @@ int validate_real_string(char *real_string) // DONE
         else
         {
             strcpy(real_string, buffer);
-            printf("real_len: %d\n", real_len);
-            printf("real_string: %s\n", real_string);
+            // printf("real_len: %d\n", real_len);
+            // printf("real_string: %s\n", real_string);
         }
     }
     return exit_code;
@@ -36,7 +36,6 @@ Example: 412.321
 Functionality: Checks the length and the amount of points in the base*/
 int validate_real_mantissa(char *base_string, int *index) // DONE
 {
-    printf("Index start checker mantissa: %d\n", (*index));
     int is_valid = 1;
     int count = 0;
     if (base_string[*index] == '+' || base_string[*index] == '-')
@@ -67,14 +66,16 @@ int validate_real_mantissa(char *base_string, int *index) // DONE
 int validate_real_exponent(char *exponent_string, int *index) // DONE
 {
     int is_valid = 1;
+    (*index)++; // Skipp the space after the mantissa
     if (exponent_string[*index] != 'e' && exponent_string[*index] != 'E') // The number could not have exponential part
     {
-        is_valid = 1;
+        is_valid = 1; // The number has no exponent, but still correct
+        (*index)--;
     }
-    else
+    else // That means that there is e or E
     {
         int count = 0;
-        (*index) = (*index) + 3; // pass the _e_ symbol.
+        (*index) = (*index) + 2; // pass the e_ symbols.
         if (exponent_string[*index] == '+' || exponent_string[*index] == '-') // Check for the optional +/- symbol
         {
             (*index)++; // pass the symbol sign symbol
@@ -92,7 +93,7 @@ int validate_real_exponent(char *exponent_string, int *index) // DONE
     return is_valid;
 }
 
-int validate_real_type(char *str)
+int validate_real_type(char *str) // DONE
 {
     int index = 0;
     int is_valid = 1;
@@ -102,19 +103,32 @@ int validate_real_type(char *str)
     }
     else
     {
-        index++; // pass the space after the mantissa
-        printf("Index after checking mantissa: %d\n", index);
+        if (!validate_real_exponent(str, &index))
+        {
+            is_valid = 0;
+        }
+    }
+    if (str[index] == '\0')
+    {
+        is_valid = 1;
+    }
+    else
+    {
+        is_valid = 0;
     }
     return is_valid;
 }
 
-// PARSER
-int parse_base_sign(char *str, int *index, char *base_sign)
+/*
+In these functions is guaranteed that the inputed number is correct
+*/
+int parse_base_sign(char *str, int *index, real_type *real_number) // DONE
 {
+    char buffer_sign = '+';
     int exit_code = EXIT_SUCCESS;
     if (isdigit(str[*index]))
     {
-        *base_sign = '+';
+        buffer_sign = '+';
     }
     else
     {
@@ -122,96 +136,115 @@ int parse_base_sign(char *str, int *index, char *base_sign)
         {
             if (str[*index] == '+')
             {
-                *base_sign = '+';
+                buffer_sign = '+';
             }
             else if (str[*index] == '-')
             {
-                *base_sign = '-';
+                buffer_sign = '-';
             }
             (*index)++; // Se encontro el signo, pasmos al primer elemento de la mantissa
         }
     }
+    real_number->base_sign = buffer_sign;
     return exit_code;
 }
 
-int parse_mantissa(char *str, int *index, char *mantissa, int *decimal_index)
+/*
+The index will be in the first postition of the numerical value
+*/
+int parse_mantissa(char *str, int *index, real_type *real_number) // DONE
 {
     int exit_code = EXIT_SUCCESS;
     int mantissa_index = 0;
-    *decimal_index = -1;
-    while ((isdigit(str[*index]) || str[*index] == '.') && exit_code == EXIT_SUCCESS)
+    int buffer_decimal_index = -1;
+    char buffer_mantissa[MAX_REAL_MANTISSA_LEN + 1];
+    while ((isdigit(str[*index]) || str[*index] == '.') && !exit_code)
     {
         if (str[*index] == '.')
         {
-            if (*decimal_index != -1)
+            if (buffer_decimal_index != -1)
             {
                 exit_code = EXIT_FAILURE;
             }
-            *decimal_index = mantissa_index;
+            buffer_decimal_index = mantissa_index;
         }
         else
         {
-            mantissa[mantissa_index++] = str[*index];
+            buffer_mantissa[mantissa_index++] = str[*index];
         }
         (*index)++;
     }
-    if (*decimal_index == -1)
+    if (buffer_decimal_index == -1)
     {
-        *decimal_index = mantissa_index;
+        buffer_decimal_index = mantissa_index;
     }
-    mantissa[mantissa_index] = '\0';
+    buffer_mantissa[mantissa_index] = '\0';
+    // Copy into the struct
+    real_number->decimal_index = buffer_decimal_index;
+    strcpy(real_number->mantissa, buffer_mantissa);
     return exit_code;
 }
 
-int parse_power(char *str, int *index, int *power)
+int parse_power(char *str, int *index, real_type *real_number)
 {
     int exit_code = EXIT_SUCCESS;
-    if (!(str[*index] == 'e' || str[*index] == 'E')) // No hay exponencial, por lo tanto la potencia es 0
+    int buffer_power_int = 0;
+    if (str[*index] == '\0') // No exponent. After checking the mantissa we should be in the index after the last number of the mantissa
     {
-        *power = 0;
         exit_code = EXIT_SUCCESS;
+        printf("The index when no E: %d\n", (*index));
+        real_number->power = buffer_power_int; // Power == 0       
     }
-    else // En el caso the que si exista E o e
+    else // There is power
     {
-        (*index)++; // Pasamos a los numeros de la potencia
-        char power_buffer[6]; // 5 digitos + \0
+        (*index) += 3; // Pasamos al primer numero de la potencia o al signo
+        printf("Index of the first number of the power: %d\n", (*index));
+        char buffer_power_str[6]; // 5 digitos + \0
         int power_index = 0; // Para recorrer la string que representa la potencia
-        if (str[*index] == '+' || str[*index] == '-')
+        while (isdigit(str[(*index)]) || str[(*index)] == '+' || str[(*index)] == '-')
         {
+            buffer_power_str[power_index++] = str[*index];
             (*index)++;
         }
-        while (isdigit(str[*index]))
-        {
-            power_buffer[power_index++] = str[*index];
-            (*index)++;
-        }
-        power_buffer[power_index] = '\0';
-        *power = atoi(power_buffer);
+        buffer_power_str[power_index] = '\0';
+
+        char *endptr;
+        buffer_power_int = strtol(buffer_power_str, &endptr, 10);
+        real_number->power = buffer_power_int;
+        printf("parse_power result: %d\n", buffer_power_int);
     }
     return exit_code;
 }
 
-int parse_number(char *str, real_type *number_buffer)
+int parse_number(char *str, real_type *real_number)
 {
     int exit_code = EXIT_SUCCESS;
     int index = 0;
-    if (parse_base_sign(str, &index, &number_buffer->base_sign) != EXIT_SUCCESS)
+    if (parse_base_sign(str, &index, real_number))
     {
-        exit_code = EXIT_FAILURE;
+        exit_code = 110;
     }
-    else if (parse_mantissa(str, &index, number_buffer->mantissa, &number_buffer->decimal_index) != EXIT_SUCCESS)
+    else if (parse_mantissa(str, &index, real_number))
     {
-        exit_code = EXIT_FAILURE;
+        exit_code = 111;
     }
-    else if (parse_power(str, &index, &number_buffer->power) != EXIT_SUCCESS)
+    else if (parse_power(str, &index, real_number))
     {
-        exit_code = EXIT_FAILURE;
+        exit_code = 112;
     }
     else if (str[index] != '\0')
     {
-        exit_code = EXIT_FAILURE;
+        exit_code = 113;
     }
     return exit_code;
+}
+
+void print_real_struct(real_type *real_number)
+{
+    printf("Mantissa[string]: %s\n", real_number->mantissa);
+    printf("Sign[char]: %c\n", real_number->base_sign);
+    printf("Decimal Index[int]: %d\n", real_number->decimal_index);
+    printf("Power[int]: %d\n", real_number->power);
 }
 
 void convert_scinot(const real_type *input, real_type *output)

@@ -12,9 +12,10 @@ int main()
 {
     int exit_code = EXIT_SUCCESS;
     char real_string[MAX_REAL_LEN];
+    real_type real_number;
     puts("Enter the real_string:");
     puts("Format: +m.n e +k");
-    if (validate_real_string(real_string))
+    if (validate_real_string(real_string)) // The string is not valid
     {
         exit_code = 103;
     }
@@ -22,12 +23,25 @@ int main()
     {
         if (!validate_real_type(real_string))
         {
-            puts("Error in mantissa");
+            exit_code = 104;
         }
         else
         {
-            puts("Correct mantissa");
+            if (parse_number(real_string, &real_number))
+            {
+                puts("Error parsing");
+                exit_code = 107;
+            }
+            else
+            {
+                puts("PARSED SUCCESSFUL!");
+                print_real_struct(&real_number);
+            }
         }
+    }
+    if (!exit_code)
+    {
+        puts("SUCCESSFUL!");
     }
     return exit_code;
 }
