@@ -1,3 +1,4 @@
 *.o
-*.app.exe
+app.exe
 tester.c
+tester.exe
