@@ -20,7 +20,7 @@ typedef struct real_type
 
 typedef struct result_type
 {
-    char mantissa[1000 + 1];
+    char mantissa[100 + 1];
     char base_sign;
     int decimal_point_index;
     int power;

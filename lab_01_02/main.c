@@ -9,7 +9,6 @@ int main()
     real_type number_02;
     real_type normalized_number_01;
     real_type normalized_number_02;
-    result_type result;
     // UI
     user_interface();
     prompt_real_number();
@@ -31,6 +30,7 @@ int main()
     }
     normalize(&number_01, &normalized_number_01);
     normalize(&number_02, &normalized_number_02);
+    result_type result;
     if (multiply_real_numbers(normalized_number_01, normalized_number_02, &result))
         return 200;
     puts("\n\tMultiplicatin Result:\n");

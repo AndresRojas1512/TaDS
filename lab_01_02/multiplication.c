@@ -6,6 +6,8 @@ int count_digits_after_dec_point(char *formated_num);
 int parse_mantissa_in_power(char *str, char *parse_formated_number);
 void insert_decimal_point(int move_n, char *input, char *answer_multiplication);
 int save_number_before_decpoint(char *multiplication_anwer);
+char *round_mantissa(char *multiplication_result, int max_len, int *total_digits);
+void printer(char *str);
 
 void reverse_str(char* str, int length)
 {
@@ -93,7 +95,7 @@ int parse_mantissa_in_power(char *str, char *parse_formated_number)
     int exit_code = EXIT_SUCCESS;
     int mantissa_index = 0;
     int buffer_decimal_index = -1;
-    char buffer_mantissa[40 + 1];
+    char buffer_mantissa[100];
     while ((isdigit(str[index]) || str[index] == '.') && !exit_code)
     {
         if (str[index] == '.')
@@ -126,7 +128,7 @@ void insert_decimal_point(int move_n, char *input, char *answer_multiplication)
     // printf("idp: %d\n", len);
     // printf("idp move_n: %d\n", move_n);
     int before_point_n = len - move_n;
-    char buffer_output[1000 + 2]; // To handle the dec point and \0
+    char buffer_output[100 + 2]; // To handle the dec point and \0
     int idx_input = 0;
     int idx_buffer = 0;
     while (before_point_n)
@@ -165,7 +167,7 @@ int save_number_before_decpoint(char *multiplication_anwer)
     return value;
 }
 
-void prepare_mantissa_for_parse(char *mantissa)
+void delete_zeros_mantissa(char *mantissa)
 {
     int len = strlen(mantissa);
     int i = len - 1;
@@ -180,14 +182,15 @@ void prepare_mantissa_for_parse(char *mantissa)
 int multiply_real_numbers(real_type num1, real_type num2, result_type *result)
 {
     // Create buffers
-    char mantissa_wpoint_01[42]; // Decimal point in index 1 (num1)
-    char mantissa_wpoint_02[42]; // Decimal point in index 1 (num2)
-    char parsed_mantissa_01[42]; // Get the new mantissa after adding point (num1)
-    char parsed_mantissa_02[42]; // Get the new mantissa after adding point (num2)
-    char answer_multiplication[42]; // Multiplication with the decimal point
+    char mantissa_wpoint_01[100]; // Decimal point in index 1 (num1)
+    char mantissa_wpoint_02[100]; // Decimal point in index 1 (num2)
+    char parsed_mantissa_01[100]; // Get the new mantissa after adding point (num1)
+    char parsed_mantissa_02[100]; // Get the new mantissa after adding point (num2)
+    char answer_multiplication[100]; // Multiplication with the decimal point
     // Calculate base sign
     char sign = '+';
-    if (num1.base_sign != num2.base_sign) {
+    if (num1.base_sign != num2.base_sign)
+    {
         sign = '-';
     }
     // Add the decimal point to the mantissa
@@ -207,9 +210,8 @@ int multiply_real_numbers(real_type num1, real_type num2, result_type *result)
         return 102;
     }
     // Now with the new mantissas parsed we multiply them. This multiplication will help to then add the decimal point and determinaten the power.
-    char *mult_result = (char *)malloc(42 * sizeof(char));
+    char *mult_result = (char *)malloc(100 * sizeof(char));
     mult_result = multiply_strings(parsed_mantissa_01, parsed_mantissa_02);
-    printf("\tMultiplication of formated mantissas: %s\n", mult_result);
     if (strcmp(mult_result, "0") == 0)
     {
         sprintf(result->mantissa, "%s", mult_result);
@@ -219,19 +221,36 @@ int multiply_real_numbers(real_type num1, real_type num2, result_type *result)
     }
     else
     {
-        // According to move_n, insert the point in the mult_result of the new mantissas
+        int mult_result_len = strlen(mult_result);
+        printf("\tMultiplication of formated mantissas: %s\n", mult_result);;
+        printf("\tLen of multiplication: %d\n", mult_result_len);
+        // According to move_n, insert the point in the mult_result of the formated mantissas
         insert_decimal_point(move_n, mult_result, answer_multiplication);
-        // Save the number before the decimal and determine the final power
+        // Calculate final power
         int number = save_number_before_decpoint(answer_multiplication);
         int temp_power = num1.power + num2.power;
         int final_power = (number <  10) ? temp_power - 1 : temp_power;
         // Parse the result
-        prepare_mantissa_for_parse(mult_result);
-        printf("\tPrepared mantissa for parse: %s\n", mult_result);
-        sprintf(result->mantissa, "%s", mult_result);
-        result->base_sign = sign;
-        result->decimal_point_index = 0;
-        result->power = final_power;
+        delete_zeros_mantissa(mult_result);
+        // Round if needed
+        if (mult_result_len > 30)
+        {
+            int total_digits = strlen(mult_result);
+            char *rounded_mantissa = (char *)malloc(100 * sizeof(char));
+            rounded_mantissa = round_mantissa(mult_result, 30, &total_digits);
+            sprintf(result->mantissa, "%s", rounded_mantissa);
+            result->base_sign = sign;
+            result->decimal_point_index = 0;
+            result->power = final_power;
+        }
+        else
+        {
+            delete_zeros_mantissa(mult_result);
+            sprintf(result->mantissa, "%s", mult_result);
+            result->base_sign = sign;
+            result->decimal_point_index = 0;
+            result->power = final_power;
+        }
     }
     // Free used memory
     free(mult_result);
@@ -255,4 +274,48 @@ int count_digits(int value)
         value /= 10;
     }
     return count;
+}
+
+char *round_mantissa(char *multiplication_result, int max_len, int *total_digits)
+{
+    char *buffer = (char *)malloc(100 * sizeof(char));
+    strcpy(buffer, multiplication_result);
+    *total_digits = strlen(buffer);
+    while ((*total_digits) > max_len)
+    {
+        if (buffer[(*total_digits)-1] >= '5')
+        {
+            int k = (*total_digits) - 2;
+            while (k >= 0 && buffer[k] == '9')
+            {
+                buffer[k] = '0';
+                k--;
+            }
+            if (k < 0)
+            {
+                reverse_str(buffer, (*total_digits));
+                buffer[(*total_digits)] = '1';
+                buffer[(*total_digits) + 1] = '\0';
+                reverse_str(buffer, (*total_digits) + 1);
+            }
+            else
+            {
+                buffer[k]++;
+            }
+        }
+        buffer[(*total_digits)-1] = '\0';
+        (*total_digits)--;
+    }
+    return buffer;
+}
+
+void printer(char *str)
+{
+    int i = 0;
+    while (str[i] != '\0')
+    {
+        printf("%c", str[i]);
+        i++;
+    }
+    printf("\n");
 }
