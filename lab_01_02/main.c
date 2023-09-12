@@ -35,12 +35,12 @@ int main()
         puts("Error parsing. One of the numbers cannot be parsed");
         return 112;
     }
-    puts("PARSED SUCCESSFULLY FINISHED!");
-    puts("Here are the parsed numbers:\n");
-    puts("\n\tNumber 1:\n");
-    print_real_struct(&number_01);
-    puts("\n\tNumber 2:\n");
-    print_real_struct(&number_02);
+    // puts("PARSED SUCCESSFULLY FINISHED!");
+    // puts("Here are the parsed numbers:\n");
+    // puts("\n\tNumber 1:\n");
+    // print_real_struct(&number_01);
+    // puts("\n\tNumber 2:\n");
+    // print_real_struct(&number_02);
     puts("\n\tNormalized Number 1:\n");
     normalize(&number_01, &normalized_number_01);
     print_real_struct(&normalized_number_01);
@@ -48,7 +48,8 @@ int main()
     normalize(&number_02, &normalized_number_02);
     print_real_struct(&normalized_number_02);
     puts("Numbers normalized. Initializing multiplication");
-    result = multiply_real_numbers(normalized_number_01, normalized_number_02);
+    if (multiply_real_numbers(normalized_number_01, normalized_number_02, &result))
+        return 200;
     puts("\n\tMultiplicatin Result:\n");
     print_result_fields(&result);
     puts("\nSUCCESSFUL!\n");
