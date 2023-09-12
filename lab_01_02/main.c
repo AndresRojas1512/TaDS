@@ -1,102 +1,56 @@
 #include "main.h"
-// ===================   MACROS   =================================
-#define STANDART_NUM_LEN 49
-#define MAX_POWER_SIZE 5
-#define MAX_MANTISSA_SIZE 40
-#define ERROR_RAW_INPUT 100
-#define ERROR_EMPTY_STRING 101
-#define ERROR_OVERFLOW 102
-#define SPECIAL_SYMBOLS_OVERFLOW 103
 
 int main()
 {
-    int exit_code = EXIT_SUCCESS;
-    char real_string[MAX_REAL_LEN];
-    real_type real_number;
-    puts("Enter the real_string:");
-    puts("Format: +m.n e +k");
-    if (validate_real_string(real_string)) // The string is not valid
+    // Create types
+    char number_input_01[MAX_REAL_LEN + 1];
+    char number_input_02[MAX_REAL_LEN + 1];
+    real_type number_01;
+    real_type number_02;
+    real_type normalized_number_01;
+    real_type normalized_number_02;
+    result_type result;
+    // UI
+    puts("Enter two real numbers:");
+    puts("Format: +m.n e +k\n");
+    printf("--> ");
+    if (validate_real_string(number_input_01))
     {
-        exit_code = 103;
+        puts("Error inputing 1st number");
+        return 110;
     }
-    else
+    printf("--> ");
+    if (validate_real_string(number_input_02))
     {
-        if (!validate_real_type(real_string))
-        {
-            exit_code = 104;
-        }
-        else
-        {
-            if (parse_number(real_string, &real_number))
-            {
-                puts("Error parsing");
-                exit_code = 107;
-            }
-            else
-            {
-                puts("PARSED SUCCESSFUL!");
-                print_real_struct(&real_number);
-            }
-        }
+        puts("Error inputing 2st number");
+        return 110;
     }
-    if (!exit_code)
+    if (!validate_real_type(number_input_01) || !validate_real_type(number_input_02))
     {
-        puts("SUCCESSFUL!");
+        puts("the numbers do not are in the correct format");
+        return 111;
     }
-    return exit_code;
+    if (parse_number(number_input_01, &number_01) || parse_number(number_input_02, &number_02))
+    {
+        puts("Error parsing. One of the numbers cannot be parsed");
+        return 112;
+    }
+    puts("PARSED SUCCESSFULLY FINISHED!");
+    puts("Here are the parsed numbers:\n");
+    puts("\n\tNumber 1:\n");
+    print_real_struct(&number_01);
+    puts("\n\tNumber 2:\n");
+    print_real_struct(&number_02);
+    puts("\n\tNormalized Number 1:\n");
+    normalize(&number_01, &normalized_number_01);
+    print_real_struct(&normalized_number_01);
+    puts("\n\tNormalized Number 2:\n");
+    normalize(&number_02, &normalized_number_02);
+    print_real_struct(&normalized_number_02);
+    puts("Numbers normalized. Initializing multiplication");
+    result = multiply_real_numbers(normalized_number_01, normalized_number_02);
+    puts("\n\tMultiplicatin Result:\n");
+    print_result_fields(&result);
+    puts("\nSUCCESSFUL!\n");
+    return 0;
 }
-
-// ===================   ALGORITHM   =================================
-// void reverse_string(char *str, int len)
-// {
-//     int start = 0;
-//     int end = len - 1;
-//     while (start < len)
-//     {
-//         char temp = str[start];
-//         str[start] = str[end];
-//         str[end] = temp;
-//         start++;
-//         end--;
-//     }
-// }
-
-// char *multiply_strings(char *num_01, char *num_02)
-// {
-//     int len_01 = strlen(num_01);
-//     int len_02 = strlen(num_02);
-//     int gen_len = len_01 + len_02;
-//     int *result_number = (int *)malloc(gen_len * sizeof(int));
-//     for (int i = 0; i < gen_len; i++)
-//     {
-//         result_number[i] = 0;
-//     }
-//     for (int i = len_01 - 1; i >= 0; i--)
-//     {
-//         for (int j = len_02 - 1; i >= 0; j--)
-//         {
-//             result_number[i + j + 1] += ((num_01[i] - '0') * (num_02[j] - '0'));
-//             result_number[i + j] += result_number[i + j + 1] / 10;
-//             result_number[i + j + 1] %= 10;
-//         }
-//     }
-//     int i = 0;
-//     while (i < gen_len && result_number[i] == 0)
-//     {
-//         i++;
-//     }
-//     char *result_string = (char *)malloc((gen_len + 1) * sizeof(char));
-//     int idx = 0;
-//     while (i < gen_len)
-//     {
-//         result_string[idx++] = result_number[i];
-//         i++;
-//     }
-//     result_string[idx] = '\0';
-//     free(result_number);
-//     if (strlen(result_string) == 0)
-//     {
-//         strcpy(result_string, "0");
-//     }
-//     return result_string;
-// }

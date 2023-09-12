@@ -120,6 +120,7 @@ int validate_real_type(char *str) // DONE
 }
 
 /*
+Parsing functions
 In these functions is guaranteed that the inputed number is correct
 */
 int parse_base_sign(char *str, int *index, real_type *real_number) // DONE
@@ -192,13 +193,13 @@ int parse_power(char *str, int *index, real_type *real_number)
     if (str[*index] == '\0') // No exponent. After checking the mantissa we should be in the index after the last number of the mantissa
     {
         exit_code = EXIT_SUCCESS;
-        printf("The index when no E: %d\n", (*index));
+        // printf("The index when no E: %d\n", (*index));
         real_number->power = buffer_power_int; // Power == 0       
     }
     else // There is power
     {
         (*index) += 3; // Pasamos al primer numero de la potencia o al signo
-        printf("Index of the first number of the power: %d\n", (*index));
+        // printf("Index of the first number of the power: %d\n", (*index));
         char buffer_power_str[6]; // 5 digitos + \0
         int power_index = 0; // Para recorrer la string que representa la potencia
         while (isdigit(str[(*index)]) || str[(*index)] == '+' || str[(*index)] == '-')
@@ -211,12 +212,12 @@ int parse_power(char *str, int *index, real_type *real_number)
         char *endptr;
         buffer_power_int = strtol(buffer_power_str, &endptr, 10);
         real_number->power = buffer_power_int;
-        printf("parse_power result: %d\n", buffer_power_int);
+        // printf("parse_power result: %d\n", buffer_power_int);
     }
     return exit_code;
 }
 
-int parse_number(char *str, real_type *real_number)
+int parse_number(char *str, real_type *real_number) // DONE
 {
     int exit_code = EXIT_SUCCESS;
     int index = 0;
@@ -239,40 +240,32 @@ int parse_number(char *str, real_type *real_number)
     return exit_code;
 }
 
+void normalize(const real_type *input, real_type *output) // DONE
+{
+    strcpy(output->mantissa, input->mantissa);
+    output->base_sign = input->base_sign;
+    output->decimal_index = 0;
+    output->power = input->power;
+
+    int i = 0;
+    while (output->mantissa[i] == '0' && i < 40)
+    {
+        i++;
+    }
+    int shift = i;
+    while (i < 40)
+    {
+        output->mantissa[i - shift] = output->mantissa[i];
+        i++;
+    }
+    output->mantissa[i - shift] = '\0'; // Null terminate the shifted mantissa
+    output->power += input->decimal_index - shift;
+}
+
 void print_real_struct(real_type *real_number)
 {
     printf("Mantissa[string]: %s\n", real_number->mantissa);
     printf("Sign[char]: %c\n", real_number->base_sign);
     printf("Decimal Index[int]: %d\n", real_number->decimal_index);
     printf("Power[int]: %d\n", real_number->power);
-}
-
-void convert_scinot(const real_type *input, real_type *output)
-{
-    int shift, i, j;
-    output->base_sign = input->base_sign;
-    if (input->decimal_index == 0)
-    {
-        shift = 0;
-        while (input->mantissa[shift] == '0' && shift < 40)
-        {
-            shift++;
-        }
-    }
-    else
-    {
-        shift = input->decimal_index - 1;
-    }
-
-    output->power = input->power + shift;
-    output->decimal_index = 1;
-    for (i = shift, j = 0; i < 40; i++, j++)
-    {
-        output->mantissa[j] = input->mantissa[i];
-    }
-    for (; j < 40; j++)
-    {
-        output->mantissa[j] = '0';
-    }
-    output->mantissa[40] = '\0';
 }

@@ -5,10 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <ctype.h>
-#include <string.h>
 #include <stdbool.h>
 
 #include "real_type.h"
+#include "multiplication.h"
 
 #endif
