@@ -9,5 +9,6 @@
 
 #include "real_type.h"
 #include "multiplication.h"
+#include "user_interface.h"
 
 #endif

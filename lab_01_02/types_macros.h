@@ -8,6 +8,7 @@
 #define MAX_REAL_LEN 51
 #define MAX_REAL_MANTISSA_LEN 40
 #define MAX_REAL_POWER_LEN 5
+#define IS_ZERO 1001
 
 typedef struct real_type
 {

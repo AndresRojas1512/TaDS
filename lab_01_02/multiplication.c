@@ -123,10 +123,10 @@ int parse_mantissa_in_power(char *str, char *parse_formated_number)
 void insert_decimal_point(int move_n, char *input, char *answer_multiplication)
 {
     int len = strlen(input);
-    printf("idp: %d\n", len);
-    printf("idp move_n: %d\n", move_n);
+    // printf("idp: %d\n", len);
+    // printf("idp move_n: %d\n", move_n);
     int before_point_n = len - move_n;
-    char buffer_output[40 + 2]; // To handle the dec point and \0
+    char buffer_output[1000 + 2]; // To handle the dec point and \0
     int idx_input = 0;
     int idx_buffer = 0;
     while (before_point_n)
@@ -147,6 +147,7 @@ void insert_decimal_point(int move_n, char *input, char *answer_multiplication)
     }
     buffer_output[idx_buffer + 1] = '\0';
     strcpy(answer_multiplication, buffer_output);
+    // puts("Idc passed idc");
 }
 
 int save_number_before_decpoint(char *multiplication_anwer)
@@ -162,6 +163,18 @@ int save_number_before_decpoint(char *multiplication_anwer)
     char *endptr;
     int value = strtol(buffer, &endptr, 10);
     return value;
+}
+
+void prepare_mantissa_for_parse(char *mantissa)
+{
+    int len = strlen(mantissa);
+    int i = len - 1;
+    while (mantissa[i] == '0')
+    {
+        mantissa[i] = '\0';
+        len--;
+        i--;
+    }
 }
 
 int multiply_real_numbers(real_type num1, real_type num2, result_type *result)
@@ -193,33 +206,33 @@ int multiply_real_numbers(real_type num1, real_type num2, result_type *result)
     {
         return 102;
     }
-    // Now with the new mantissas parsed we multiply them
+    // Now with the new mantissas parsed we multiply them. This multiplication will help to then add the decimal point and determinaten the power.
     char *mult_result = (char *)malloc(42 * sizeof(char));
     mult_result = multiply_strings(parsed_mantissa_01, parsed_mantissa_02);
-    // According to move_n, insert the point in the mult_result of the new mantissas
-    insert_decimal_point(move_n, mult_result, answer_multiplication);
-    // Save the number before the decimal
-    int number = save_number_before_decpoint(answer_multiplication);
-    // Calculate resultant power
-    // char *endptr_01;
-    // double num_01_mantissa_conv = strtod(num1.mantissa, &endptr_01);
-    // while (num_01_mantissa_conv > 10)
-    // {
-    //     num_01_mantissa_conv /= 10.0;
-    // }
-    // char *endptr_02;
-    // double num_02_mantissa_conv = strtod(num2.mantissa, &endptr_02);
-    // while (num_02_mantissa_conv > 10)
-    // {
-    //     num_02_mantissa_conv /= 10.0;
-    // }
-    int temp_power = num1.power + num2.power;
-    int final_power = (number <  10) ? temp_power - 1 : temp_power;
-    // Parse the result
-    sprintf(result->mantissa, "%s", mult_result);
-    result->base_sign = sign;
-    result->decimal_point_index = 0;
-    result->power = final_power;
+    printf("\tMultiplication of formated mantissas: %s\n", mult_result);
+    if (strcmp(mult_result, "0") == 0)
+    {
+        sprintf(result->mantissa, "%s", mult_result);
+        result->base_sign = sign;
+        result->decimal_point_index = 0;
+        result->power = 0;
+    }
+    else
+    {
+        // According to move_n, insert the point in the mult_result of the new mantissas
+        insert_decimal_point(move_n, mult_result, answer_multiplication);
+        // Save the number before the decimal and determine the final power
+        int number = save_number_before_decpoint(answer_multiplication);
+        int temp_power = num1.power + num2.power;
+        int final_power = (number <  10) ? temp_power - 1 : temp_power;
+        // Parse the result
+        prepare_mantissa_for_parse(mult_result);
+        printf("\tPrepared mantissa for parse: %s\n", mult_result);
+        sprintf(result->mantissa, "%s", mult_result);
+        result->base_sign = sign;
+        result->decimal_point_index = 0;
+        result->power = final_power;
+    }
     // Free used memory
     free(mult_result);
     return 0;

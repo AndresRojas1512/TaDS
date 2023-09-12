@@ -11,43 +11,26 @@ int main()
     real_type normalized_number_02;
     result_type result;
     // UI
-    puts("Enter two real numbers:");
-    puts("Format: +m.n e +k\n");
-    printf("--> ");
-    if (validate_real_string(number_input_01))
+    user_interface();
+    prompt_real_number();
+    if (validate_real_string(number_input_01) || !validate_real_type(number_input_01))
     {
-        puts("Error inputing 1st number");
+        puts("Error: Inputing real number");
         return 110;
     }
-    printf("--> ");
-    if (validate_real_string(number_input_02))
+    prompt_natural_number();
+    if (validate_real_string(number_input_02) || !validate_real_type(number_input_02))
     {
-        puts("Error inputing 2st number");
-        return 110;
-    }
-    if (!validate_real_type(number_input_01) || !validate_real_type(number_input_02))
-    {
-        puts("the numbers do not are in the correct format");
+        puts("Error: Inputing natural number");
         return 111;
     }
     if (parse_number(number_input_01, &number_01) || parse_number(number_input_02, &number_02))
     {
-        puts("Error parsing. One of the numbers cannot be parsed");
+        puts("Error parsing. The numbers cannot be parsed");
         return 112;
     }
-    // puts("PARSED SUCCESSFULLY FINISHED!");
-    // puts("Here are the parsed numbers:\n");
-    // puts("\n\tNumber 1:\n");
-    // print_real_struct(&number_01);
-    // puts("\n\tNumber 2:\n");
-    // print_real_struct(&number_02);
-    puts("\n\tNormalized Number 1:\n");
     normalize(&number_01, &normalized_number_01);
-    print_real_struct(&normalized_number_01);
-    puts("\n\tNormalized Number 2:\n");
     normalize(&number_02, &normalized_number_02);
-    print_real_struct(&normalized_number_02);
-    puts("Numbers normalized. Initializing multiplication");
     if (multiply_real_numbers(normalized_number_01, normalized_number_02, &result))
         return 200;
     puts("\n\tMultiplicatin Result:\n");
