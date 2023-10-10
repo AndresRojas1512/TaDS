@@ -12,11 +12,11 @@
 #include "helper.h"
 #include "read_house.h"
 
-int complex_analisys(void);
+int complex_analisys(int n);
 unsigned long long microseconds_now(void);
 int import_data_ca(char *filename, house_type *house_table, house_type *house_buffer, int *table_len);
 void print_array(int *array, int len);
-void output_results(int *mysort_house_time, int *mysort_key_time, int *qsort_house_time, int *qsort_key_time, int *n_elements);
+void microseconds_table(int *mysort_house_time, int *mysort_key_time, int *qsort_house_time, int *qsort_key_time, int *n_elements);
 void time_complexity(int *mysort_house_time, int *mysort_key_time, int *qsort_house_time, int *qsort_key_time, int *n_elements);
 void space_complexity(void);
 

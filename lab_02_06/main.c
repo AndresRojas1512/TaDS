@@ -19,6 +19,7 @@ int main(void)
     key_type key_table[MAX_TABLE_SIZE];
     int house_table_len = 0;
     int key_table_len = 0;
+    int n_exp;
     do
     {
         menu();
@@ -61,6 +62,7 @@ int main(void)
                 break;
             case 4:
                 mysort(house_table, house_table_len, sizeof(house_type), house_price_comparator);
+                import_data_to_key(key_table, house_table, house_table_len, &key_table_len);
                 exit_code = print_houses_table(house_table, house_table_len);
                 if (exit_code == ERROR_NO_DATA_IMPORTED)
                     puts("\tОшибка: Нет данных для сортировки");
@@ -138,7 +140,9 @@ int main(void)
                     puts("\tОшибка: Ввод правой границы интервала");
                 break;
             case 11:
-                exit_code = complex_analisys();
+                printf("Ввод количество раз для проведения замеров: ");
+                scanf("%d", &n_exp);
+                exit_code = complex_analisys(n_exp);
             }
         }
     }

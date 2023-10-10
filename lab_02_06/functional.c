@@ -147,6 +147,7 @@ int filter(house_type *house_table, int house_table_len, double ll, double rl)
     {
         int count = 0;
         printf("\n");
+        print_table_header();
         for (int i = 0; i < house_table_len; i++)
         {
             if ((house_table[i].is_primary == 0) && (house_table[i].rooms_n == 2) && (calc_price(house_table[i].sqr_meters, house_table[i].sqr_meter_price) >= ll) && (calc_price(house_table[i].sqr_meters, house_table[i].sqr_meter_price) <= rl))
@@ -155,6 +156,7 @@ int filter(house_type *house_table, int house_table_len, double ll, double rl)
                 count++;
             }
         }
+        printf("-------------------------------------------------------------------------------------------------------------------------------------------------------------\n");
         printf("\n");
         printf("\tКоличество: %d\n", count);
         if (!count)
