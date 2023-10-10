@@ -84,16 +84,16 @@ int print_houses_table(house_type *house_table, int house_table_len)
 }
 
 // CASE 5: Output Key Table (Generic)
-int print_keys_table(key_type *keys_table, int house_table_len)
+int print_keys_table(key_type *keys_table, int key_table_len) // DONE
 {
     int exit_code = EXIT_SUCCESS;
-    if (!house_table_len)
+    if (!key_table_len)
         exit_code = ERROR_NO_DATA_IMPORTED;
     else
     {
         printf("\n");
         print_keys_header();
-        for (int i = 0; i < house_table_len; i++)
+        for (int i = 0; i < key_table_len; i++)
             printf("| %-6d | %-15lf |\n", keys_table[i].ot_idx, keys_table[i].sqr_meter_price);
         printf("----------------------------\n");
     }
@@ -101,11 +101,11 @@ int print_keys_table(key_type *keys_table, int house_table_len)
 }
 
 // CASE 7: Show Table Using Key Table
-int sort_table_key_based(house_type *houses_table, key_type *keys_table, int houses_table_len)
+int sort_table_key_based(house_type *houses_table, key_type *keys_table, int key_table_len) // DONE
 {
-    if (!houses_table_len)
+    if (!key_table_len)
         return ERROR_NO_DATA_IMPORTED;
-    for (int i = 0; i < houses_table_len; i++)
+    for (int i = 0; i < key_table_len; i++)
     {
         if (houses_table[keys_table[i].ot_idx].is_primary)
             print_record_primary(&houses_table[keys_table[i].ot_idx]);
@@ -164,11 +164,12 @@ int filter(house_type *house_table, int house_table_len, double ll, double rl)
 }
 
 // HELPER
-void import_data_to_key(key_type *keys_table, house_type *houses_table, int houses_table_len)
+void import_data_to_key(key_type *keys_table, house_type *houses_table, int houses_table_len, int *key_table_len)
 {
     for (int i = 0; i < houses_table_len; i++)
     {
         keys_table[i].ot_idx = i;
         keys_table[i].sqr_meter_price = houses_table[i].sqr_meter_price;
     }
+    *key_table_len = houses_table_len;
 }

@@ -18,6 +18,7 @@ int main(void)
     house_type house_table[MAX_TABLE_SIZE];
     key_type key_table[MAX_TABLE_SIZE];
     int house_table_len = 0;
+    int key_table_len = 0;
     do
     {
         menu();
@@ -41,7 +42,7 @@ int main(void)
                 if (!exit_code)
                 {
                     puts("\tУспешно: Данные импортированы! Таблица ключей оформлена");
-                    import_data_to_key(key_table, house_table, house_table_len);
+                    import_data_to_key(key_table, house_table, house_table_len, &key_table_len);
                 }
                 else
                 {
@@ -65,7 +66,7 @@ int main(void)
                     puts("\tОшибка: Нет данных для сортировки");
                 break;
             case 5:
-                exit_code = print_keys_table(key_table, house_table_len);
+                exit_code = print_keys_table(key_table, key_table_len);
                 if (exit_code == ERROR_NO_DATA_IMPORTED)
                     puts("\tОшибка: Нет данных для печатия");
                 break;
@@ -104,7 +105,7 @@ int main(void)
                 {
                     puts("\tЗапись успешно добавлена");
                     print_houses_table(house_table, house_table_len);
-                    import_data_to_key(key_table, house_table, house_table_len);
+                    import_data_to_key(key_table, house_table, house_table_len, &key_table_len);
                 }
                 break;
             case 9:
@@ -114,6 +115,7 @@ int main(void)
                     exit_code = delete_in_price_range(house_table, ll, rl, &house_table_len);
                     if (!exit_code)
                     {
+                        import_data_to_key(key_table, house_table, house_table_len, &key_table_len);
                         exit_code = print_houses_table(house_table, house_table_len);
                         if (exit_code == ERROR_NO_DATA_IMPORTED)
                             puts("\tОшибка: Нет данных для печатия");

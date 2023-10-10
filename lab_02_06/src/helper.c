@@ -74,17 +74,19 @@ void print_record_secondary(house_type *house_buffer)
 int input_left_right_limits(double *ll, double *rl)
 {
     int exit_code = EXIT_SUCCESS;
-    printf("Enter the left limit: ");
+    printf("Ввод левого предела: ");
     if (scanf("%lf", ll) != 1)
         exit_code = ERROR_INPUT_LL;
     else if (*ll < 0)
         exit_code = ERROR_INPUT_LL;
     else
     {
-        printf("Enter the right limit: ");
+        printf("Ввод правого предела: ");
         if (scanf("%lf", rl) != 1)
             exit_code = ERROR_INPUT_RL;
         else if (*rl < 0)
+            exit_code = ERROR_INPUT_RL;
+        if (*ll > *rl)
             exit_code = ERROR_INPUT_RL;
     }
     return exit_code;

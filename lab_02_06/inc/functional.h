@@ -25,6 +25,6 @@ int delete_in_price_range(house_type *house_table, double ll, double rl, int *ho
 // CASE 10: Filter
 int filter(house_type *house_table, int house_table_len, double ll, double rl);
 // HELPER FUNCTIONS
-void import_data_to_key(key_type *keys_table, house_type *houses_table, int houses_table_len);
+void import_data_to_key(key_type *keys_table, house_type *houses_table, int houses_table_len, int *key_table_len);
 
 #endif
