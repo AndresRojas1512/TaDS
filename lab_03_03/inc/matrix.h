@@ -19,6 +19,16 @@ typedef struct matrix_mtd_t
     int A_len;
     int JA_len;
     int IA_len;
+    int rows;
+    int cols;
 } matrix_mtd_t;
+
+typedef struct vector_mtd_t
+{
+    int *A;
+    int *VA;
+    int rows; // check if multiplication is possible
+    int elems_amount; // size of both vectors
+} vector_mtd_t;
 
 #endif

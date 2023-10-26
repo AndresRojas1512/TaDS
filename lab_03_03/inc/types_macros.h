@@ -14,5 +14,6 @@
 
 #define X_Y_SAME 1
 #define X_Y_DIFF 0
+#define VECTOR_COLS 1
 
 #endif
