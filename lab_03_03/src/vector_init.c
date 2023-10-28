@@ -1,26 +1,36 @@
 #include "vector_init.h"
 
-int vector_init(vector_mtd_t *vector)
+int vector_init(vector_mtd_t *vector, matrix_std_t *vector_std)
 {
+    // Init mtd vector
     int rows, elems_amount;
     if (read_row_size_vector(&rows)) // rows for check possible multiplication
         return EXIT_FAILURE;
     if (read_elems_amount(&elems_amount)) // read sizes of A and IA
         return EXIT_FAILURE;
-    puts("\tPassed_01");
     vector->elems_amount = elems_amount; // init elems_amount
     vector->rows = rows;
-    if (vector_fields_alloc(vector)) // alloc memory
+    if (vector_fields_alloc(vector, elems_amount)) // alloc memory
         return EXIT_FAILURE;
-    puts("\tPassed_02");
     if (read_vector_data_general(vector)) // fill data
         return EXIT_FAILURE;
-    puts("\tPassed_03");
-    printf("Vector Vector A:");
-    vector_output(vector->A, vector->elems_amount);
-    printf("Vector Vector VA:");
-    vector_output(vector->VA, vector->elems_amount);
+    // Init std vector
+    vector_std->rows = rows;
+    vector_std->cols = 1;
+    if (matrix_alloc_struct_std(vector_std, rows, 1)) // fixed
+        return EXIT_FAILURE;
+    puts("\tVector Std Allocated Correctly");
+    vector_std_import(vector_std, vector);
     return EXIT_SUCCESS;
+}
+
+void vector_std_import(matrix_std_t *vector_std, vector_mtd_t *vector_mtd)
+{
+    // printf("vector_std_import input: %d\n", vector_mtd->elems_amount);
+    // vector_output(vector_mtd->A, vector_mtd->elems_amount);
+    // vector_output(vector_mtd->VA, vector_mtd->elems_amount);
+    for (int i = 0; i < vector_mtd->elems_amount; i++)
+        vector_std->matrix[vector_mtd->VA[i]][0] = vector_mtd->A[i];
 }
 
 int read_row_size_vector(int *rows) // read rows -> check possible multiplication
@@ -33,12 +43,12 @@ int read_row_size_vector(int *rows) // read rows -> check possible multiplicatio
     return EXIT_SUCCESS;
 }
 
-int vector_fields_alloc(vector_mtd_t *vector) // allocate memory for valid elems
+int vector_fields_alloc(vector_mtd_t *vector, int elems_amount) // allocate memory for valid elems
 {
-    vector->A = (int *)calloc(vector->elems_amount, sizeof(int));
+    vector->A = (int *)calloc(elems_amount, sizeof(int));
     if (!vector->A)
         return EXIT_FAILURE;
-    vector->VA = (int *)calloc(vector->elems_amount, sizeof(int));
+    vector->VA = (int *)calloc(elems_amount, sizeof(int));
     if (!vector->VA)
     {
         free(vector->A);
@@ -120,10 +130,23 @@ int vector_realloc(vector_mtd_t *vector, int rlen)
     int *temp_A = (int *)realloc(vector->A, rlen * sizeof(int));
     if (!temp_A)
         return EXIT_FAILURE;
+    puts("\tPassed tempA Realloc");
     int *temp_VA = (int *)realloc(vector->VA, rlen * sizeof(int));
     if (!temp_VA)
         return EXIT_FAILURE;
+    puts("\tPassed tempVA Realloc");
     vector->A = temp_A;
     vector->VA = temp_VA;
+    return EXIT_SUCCESS;
+}
+
+int result_std_import(matrix_std_t *result_std, vector_mtd_t *result_mtd)
+{
+    // printf("Debug Result Import: %d\n", result_mtd->rows);
+    if (matrix_alloc_struct_std(result_std, result_mtd->rows, 1)) // mem alloc
+        return EXIT_FAILURE;
+    vector_std_import(result_std, result_mtd);
+    result_std->cols = 1;
+    result_std->rows = result_mtd->rows;
     return EXIT_SUCCESS;
 }

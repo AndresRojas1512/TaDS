@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "types_macros.h"
-#include "matrix.h"
+#include "matrix_vector_t.h"
 
 int read_sizes(int *m, int *n);
 int read_elems_amount(int *n);

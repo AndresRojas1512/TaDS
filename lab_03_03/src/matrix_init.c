@@ -9,7 +9,7 @@ int matrix_init(matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
         return EXIT_FAILURE;
     if (read_elems_amount(&elems_amount))
         return EXIT_FAILURE;
-    
+    // HO: Helper data
     int **matrix_data = matrix_alloc_std(elems_amount, DATA_SIZE_STD);
     if (!matrix_data)
         return EXIT_FAILURE;
@@ -18,7 +18,7 @@ int matrix_init(matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
         return EXIT_FAILURE;
     matrix_data_sort(matrix_data, elems_amount);
     matrix_data_output(matrix_data, elems_amount);
-
+    // WO: Init Std & Mtd Matrices
     if (matrix_std_init(matrix_std, matrix_data, rows, cols, elems_amount))
         return EXIT_FAILURE;
 
