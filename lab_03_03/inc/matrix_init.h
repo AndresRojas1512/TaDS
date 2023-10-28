@@ -17,7 +17,7 @@ void matrix_std_import(matrix_std_t *matrix_std, int **matrix_data, int elems_am
 void matrix_data_sort(int **matrix_data, int elems_amount);
 void swap(int *a, int *b);
 
-int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int rows);
+int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int rows, int cols);
 void matrix_mtd_import(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_count);
 void vector_IA_init(matrix_mtd_t *matrix_mtd, int **matrix_data);
 int check_row_elems(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int idx_IA);

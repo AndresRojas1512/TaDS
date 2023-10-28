@@ -22,7 +22,7 @@ int matrix_init(matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
     if (matrix_std_init(matrix_std, matrix_data, rows, cols, elems_amount))
         return EXIT_FAILURE;
 
-    if (matrix_mtd_init(matrix_mtd, matrix_data, elems_amount, rows))
+    if (matrix_mtd_init(matrix_mtd, matrix_data, elems_amount, rows, cols))
         return EXIT_FAILURE;
 
     return EXIT_SUCCESS;
@@ -81,13 +81,15 @@ void swap(int *a, int *b)
     b[2] = temp[2];
 }
 
-int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int rows)
+int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int rows, int cols)
 {
     if (matrix_mtd_fields_alloc(matrix_mtd, elems_amount, rows))
         return EXIT_FAILURE;
     matrix_mtd->A_len = elems_amount;
     matrix_mtd->JA_len = elems_amount;
     matrix_mtd->IA_len = rows + 1;
+    matrix_mtd->rows = rows;
+    matrix_mtd->cols = cols;
     matrix_mtd_import(matrix_mtd, matrix_data, elems_amount);
     vector_IA_init(matrix_mtd, matrix_data);
     printf("Vector A: ");
@@ -121,7 +123,7 @@ int check_row_elems(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amoun
     for (int i = 0; i < elems_amount; i++)
     {
         if (matrix_data[i][0] == idx_IA)
-            return get_index(matrix_mtd, matrix_mtd->A[i]);
+            return i;  // return index where this row starts in A
     }
     return -1;
 }

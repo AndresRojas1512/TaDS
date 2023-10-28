@@ -40,7 +40,10 @@ int vector_fields_alloc(vector_mtd_t *vector) // allocate memory for valid elems
         return EXIT_FAILURE;
     vector->VA = (int *)calloc(vector->elems_amount, sizeof(int));
     if (!vector->VA)
+    {
+        free(vector->A);
         return EXIT_FAILURE;
+    }
     return EXIT_SUCCESS;
 }
 
@@ -110,4 +113,17 @@ int check_vector_repeated(vector_mtd_t *vector, int current_index, int x, int *r
         }
     }
     return X_Y_DIFF;
+}
+
+int vector_realloc(vector_mtd_t *vector, int rlen)
+{
+    int *temp_A = (int *)realloc(vector->A, rlen * sizeof(int));
+    if (!temp_A)
+        return EXIT_FAILURE;
+    int *temp_VA = (int *)realloc(vector->VA, rlen * sizeof(int));
+    if (!temp_VA)
+        return EXIT_FAILURE;
+    vector->A = temp_A;
+    vector->VA = temp_VA;
+    return EXIT_SUCCESS;
 }

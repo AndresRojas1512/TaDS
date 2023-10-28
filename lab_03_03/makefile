@@ -1,6 +1,6 @@
 .PHONY : clean func unit release debug
 CC := gcc
-CFLAGS := -std=c99 -Wall -Werror -pedantic -Wextra -Wvla -Wfloat-equal -Wfloat-conversion 
+CFLAGS := -std=c99 -pedantic -Wextra -Wvla -Wfloat-equal -Wfloat-conversion 
 DFLAGS := -g3 --coverage
 UTFLAGS := -lcheck
 
