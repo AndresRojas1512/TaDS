@@ -2,7 +2,7 @@
 
 int read_sizes(FILE *file ,int *m, int *n) // done file
 {
-    UF_PRINT("Input rows and cols:\n");
+    UF_PRINT("Введите количество строк и столбцов: ");
     if (fscanf(file, "%d %d", m, n) != 2)
         return ERROR_M_SIZES_READ;
     if (*m <= 0 || *n <= 0)
@@ -12,7 +12,7 @@ int read_sizes(FILE *file ,int *m, int *n) // done file
 
 int read_elems_amount(FILE *file, int *n) // done file
 {
-    UF_PRINT("Input elements amount:\n");
+    UF_PRINT("Введите количество ненулевых элементов: ");
     if (fscanf(file, "%d", n) != 1)
         return EXIT_FAILURE;
     if (*n <= 0)
@@ -22,15 +22,15 @@ int read_elems_amount(FILE *file, int *n) // done file
 
 int read_data_single(FILE *file, int *x, int *y, int *data, int rows, int cols, int i) // done file
 {
-    UF_PRINT("Data Input %d:\n", i);
-    UF_PRINT("\tEnter row and col idx: ");
+    UF_PRINT("Ввод данных %d элемента:\n", i + 1);
+    UF_PRINT("\tВведите индекс строки и столбца: ");
     if (fscanf(file, "%d %d", x, y) != 2) // coords
         return EXIT_FAILURE;
     if (*x < 0 || *y < 0) // check range
         return EXIT_FAILURE;
     if (*x >= rows || *y >= cols) // check range
         return EXIT_FAILURE;
-    UF_PRINT("\tEnter val: ");
+    UF_PRINT("\tВведите элемент: ");
     if (fscanf(file, "%d", data) != 1)
         return EXIT_FAILURE;
     if (!data)
@@ -54,7 +54,7 @@ int read_data_general(FILE *file, int **matrix_data, int elems_amount, int rows,
             is_repeated = check_repeated(matrix_data, i, x, y, &rep_idx);
             if (is_repeated)
             {
-                UF_PRINT("Rep XY in pos: (%d, %d)\n", matrix_data[rep_idx][0], matrix_data[rep_idx][1]);
+                UF_PRINT("Повторение X и Y: (%d, %d)\n", matrix_data[rep_idx][0], matrix_data[rep_idx][1]);
                 UF_PRINT("Enter 1 to replace, else 0: ");
                 if (fscanf(file ,"%d", &flag_repl) != 1)
                     return EXIT_FAILURE;

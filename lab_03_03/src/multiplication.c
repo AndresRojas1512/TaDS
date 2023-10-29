@@ -4,22 +4,34 @@ int matrix_vector_multiply(matrix_mtd_t *matrix, vector_mtd_t *vector, vector_mt
 {
     if (matrix->cols != vector->rows)
         return EXIT_FAILURE;
+
     result->rows = matrix->rows;
     result->elems_amount = 0;
+
     for (int i = 0; i < matrix->rows; i++)
     {
         int sum = 0;
         for (int j = matrix->IA[i]; j < matrix->IA[i + 1]; j++)
         {
             int col_index = matrix->JA[j];
-            for (int k = 0; k < vector->elems_amount; k++)
+            int vector_value = 0;
+
+            // Use a binary search to find the value in the vector
+            int left = 0, right = vector->elems_amount - 1;
+            while (left <= right)
             {
-                if (vector->VA[k] == col_index)
+                int mid = left + (right - left) / 2;
+                if (vector->VA[mid] == col_index)
                 {
-                    sum += matrix->A[j] * vector->A[k];
+                    vector_value = vector->A[mid];
                     break;
                 }
+                else if (vector->VA[mid] < col_index)
+                    left = mid + 1;
+                else
+                    right = mid - 1;
             }
+            sum += matrix->A[j] * vector_value;
         }
         if (sum != 0)
         {

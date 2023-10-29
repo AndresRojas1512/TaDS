@@ -2,8 +2,8 @@
 
 int complexity_analisys(void)
 {
-    int matrix_sizes[] = {100, 200, 300, 400, 500};
-    int percentages[] = {1, 5, 10, 25, 50, 75, 100};
+    int matrix_sizes[] = {100, 200, 300, 400};
+    int percentages[] = {1, 10, 25, 50, 75, 100};
     double data_std[MATRIX_SIZES][PERCENTAGES_N];
     double data_mtd[MATRIX_SIZES][PERCENTAGES_N];
     int n_times = 10;
@@ -70,9 +70,10 @@ int complexity_analisys(void)
             matrix_mtd_free(&matrix_mtd);
             vector_mtd_free(&vector_mtd);
             matrix_std_free(&vector_std);
-
-            printf("\tTime MTD: %f\n", data_mtd[i][j]);
-            printf("\tTime STD: %f\n", data_std[i][j]);
+            printf("\nПроцент заполнения матрицы: %d\n", percentages[j]);
+            printf("\tВремя SPMM: %f\n", data_mtd[i][j]);
+            printf("\tВремя STD: %f\n", data_std[i][j]);
+            // printf("%d %d\n", i, j);
         }
     }
     return EXIT_SUCCESS;
@@ -91,14 +92,14 @@ int read_data(char *filename, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd
     FILE *file = fopen(filename, "r");
     if (!file)
     {
-        printf("\tError File Opening\n");
+        printf("\tОшибка при открытии файл с данными\n");
         return EXIT_FAILURE;
     }
     if (matrix_init(file, matrix_std, matrix_mtd))
         return EXIT_FAILURE;
     if (vector_init(file, vector_mtd, vector_std))
         return EXIT_FAILURE;
-    printf("\tSuccess Reading Data: %s\n", filename);
+    printf("Успешно: Файл открыт: %s\n", filename);
     fclose(file);
     return EXIT_SUCCESS;
 }

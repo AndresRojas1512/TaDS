@@ -9,6 +9,7 @@
 #include "multiplication.h"
 #include "complexity_analisys.h"
 #include "user_interface.h"
+#include "complexity_analisys.h"
 
 int main(void)
 {
@@ -25,28 +26,23 @@ int main(void)
 
     matrix_std_t result_std_mult_std;
 
-    FILE *file = stdin;
-    if (!file)
-    {
-        printf("Error file\n");
-        return EXIT_FAILURE;
-    }
-
-    printf("1 for CA, 0 for UF: ");
-    fscanf(file, "%d", &option);
+    printf("Введите 1 для запуска анализа эффективности.\n");
+    printf("Введите 0 для ручного введение данных:\n");
+    fscanf(stdin, "%d", &option);
     if (!option)
         user_interface = 1;
 
     if (!option)
     {
-        puts("\tMatrix A Data:");
-        exit_code = matrix_init(file, &matrix_std_A, &matrix_mtd_A);
+        puts("\tВведение данных матрицы\n");
+        exit_code = matrix_init(stdin, &matrix_std_A, &matrix_mtd_A);
         if (!exit_code)
         {
-            exit_code = vector_init(file, &vector_mtd, &vector_std);
-            printf("Matrix Std:\n");
+            puts("\n\tВведение данных вектора-столбца\n");
+            exit_code = vector_init(stdin, &vector_mtd, &vector_std);
+            printf("\tВведенная матрица:\n");
             matrix_std_output(&matrix_std_A);
-            printf("\tVector Std:\n");
+            printf("\tВведенный вектор:\n");
             matrix_std_output(&vector_std);
             printf("\n");
             // printf("\tRC after vector_mtd init: %d\n", exit_code);
@@ -64,30 +60,29 @@ int main(void)
 
                 if (!exit_code)
                 {
-                    printf("\n\tResults Mtd:\n");
-                    printf("Vector A: ");
+                    printf("\n\tРезультаты SPMM умножения в формате 'Вектор-столбец':\n");
+                    printf("Вектор A: ");
                     vector_output(result.A, result.elems_amount);
-                    printf("Vector VA: ");
+                    printf("Вектор VA: ");
                     vector_output(result.VA, result.elems_amount);
                     // printf("After Mult Rows: %d\n", result.rows);
                     // printf("After Mult Elems Amount: %d\n", result.elems_amount);
                     if (result_std_import(&result_std, &result))
                         return EXIT_FAILURE;
-                    puts("\n\tResult Std:");
+                    printf("\n\tРезультаты SPMM умножения в стандартом формате:\n");
                     matrix_std_output(&vector_std);
+
                     // STANDARD MATRIX MULTIPLICATION
                     if (matrix_alloc_struct_std(&result_std_mult_std, matrix_std_A.rows, 1))
                         return EXIT_FAILURE;
                     matrix_multiply_standard(&matrix_std_A, &vector_std, &result_std_mult_std);
-                    puts("\n\tVector Std Mult Std:\n");
+                    printf("\n\tРезультаты стандартного умножения:\n");
                     matrix_std_output(&result_std_mult_std);
                 }
             }
         }
     }
     else if (option)
-    {
         exit_code = complexity_analisys();
-    }
     return exit_code;
 }

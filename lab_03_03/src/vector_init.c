@@ -35,7 +35,7 @@ void vector_std_import(matrix_std_t *vector_std, vector_mtd_t *vector_mtd)
 
 int read_row_size_vector(FILE *file, int *rows) // read rows -> check possible multiplication done file
 {
-    UF_PRINT("N Vector Rows: ");
+    UF_PRINT("Введите количество строк: ");
     if (fscanf(file, "%d", rows) != 1)
         return EXIT_FAILURE;
     if ((*rows) <= 0)
@@ -59,14 +59,14 @@ int vector_fields_alloc(vector_mtd_t *vector, int elems_amount) // allocate memo
 
 int read_vector_data_single(FILE *file, int *x, int *data, int rows, int i) // coordenates and data done file
 {
-    UF_PRINT("Vector Data Input %d:\n", i);
-    UF_PRINT("Enter row idx: ");
+    UF_PRINT("Ввод данных %d элемента:\n", i + 1);
+    UF_PRINT("Введите индекс строки ненулевого элемента: ");
     if (fscanf(file, "%d", x) != 1)
         return EXIT_FAILURE;
     if (*x < 0 || *x >= rows)
         return EXIT_FAILURE;
         
-    UF_PRINT("Enter Vector Val: ");
+    UF_PRINT("Введите значение элемента: ");
     if (fscanf(file ,"%d", data) != 1)
         return EXIT_FAILURE;
     if (!data)
@@ -90,8 +90,8 @@ int read_vector_data_general(FILE *file, vector_mtd_t *vector)
             is_repeated = check_vector_repeated(vector, i, x, &rep_idx);
             if (is_repeated)
             {
-                UF_PRINT("Rep RowIdx in: %d\n", vector->VA[rep_idx]);
-                UF_PRINT("Enter 1 to replace, else 0: ");
+                UF_PRINT("\tТакой индекс уже существует: %d\n", vector->VA[rep_idx]);
+                UF_PRINT("\tВведите 1 для замены элемента в данной позиции, 0 иначе: ");
                 if (fscanf(file, "%d", &flag_repl) != 1)
                     return EXIT_FAILURE;
                 if (flag_repl)
