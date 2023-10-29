@@ -150,3 +150,4 @@ int result_std_import(matrix_std_t *result_std, vector_mtd_t *result_mtd)
     result_std->rows = result_mtd->rows;
     return EXIT_SUCCESS;
 }
+

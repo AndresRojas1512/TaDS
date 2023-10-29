@@ -20,5 +20,8 @@
 int complexity_analisys(void);
 unsigned long long microseconds_now(void);
 int read_data(char *filename, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd, vector_mtd_t *vector_mtd, matrix_std_t *vector_std);
+void matrix_std_free(matrix_std_t *matrix_std);
+void matrix_mtd_free(matrix_mtd_t *matrix_mtd);
+void vector_mtd_free(vector_mtd_t *vector_mtd);
 
 #endif

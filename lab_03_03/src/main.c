@@ -52,7 +52,16 @@ int main(void)
             // printf("\tRC after vector_mtd init: %d\n", exit_code);
             if (!exit_code)
             {
+                if (vector_fields_alloc(&result, matrix_std_A.rows))
+                    return EXIT_FAILURE;
                 exit_code = matrix_vector_multiply(&matrix_mtd_A, &vector_mtd, &result);
+                
+                if (result.elems_amount < matrix_mtd_A.rows)
+                {
+                    if (vector_realloc(&result, result.elems_amount))
+                        return EXIT_FAILURE;
+                }
+
                 if (!exit_code)
                 {
                     printf("\n\tResults Mtd:\n");
