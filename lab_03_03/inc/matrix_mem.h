@@ -12,4 +12,8 @@ int matrix_alloc_struct_std(matrix_std_t *matrix_std, size_t m, size_t n);
 int matrix_mtd_fields_alloc(matrix_mtd_t *matrix_mtd, int elems_amount, int rows);
 void matrix_free_std(int **matrix, int m);
 
+void matrix_std_free(matrix_std_t *matrix_std);
+void matrix_mtd_free(matrix_mtd_t *matrix_mtd);
+void vector_mtd_free(vector_mtd_t *vector_mtd);
+
 #endif

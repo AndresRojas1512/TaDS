@@ -79,7 +79,16 @@ int main(void)
                     printf("\n\tРезультаты стандартного умножения:\n");
                     matrix_std_output(&result_std_mult_std);
                 }
+                matrix_std_free(&matrix_std_A);
+                matrix_mtd_free(&matrix_mtd_A);
+                vector_mtd_free(&vector_mtd);
+                matrix_std_free(&vector_std);
+                vector_mtd_free(&result);
+                matrix_std_free(&result_std);
+                matrix_std_free(&result_std_mult_std);
             }
+            matrix_std_free(&matrix_std_A);
+            matrix_mtd_free(&matrix_mtd_A);
         }
     }
     else if (option)

@@ -24,7 +24,8 @@ int matrix_init(FILE *file, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
 
     if (matrix_mtd_init(matrix_mtd, matrix_data, elems_amount, rows, cols))
         return EXIT_FAILURE;
-
+    // Free matrix data
+    matrix_free_std(matrix_data, elems_amount);
     return EXIT_SUCCESS;
 }
 

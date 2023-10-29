@@ -28,6 +28,12 @@ int complexity_analisys(void)
             if (read_data(filename, &matrix_std, &matrix_mtd, &vector_mtd, &vector_std))
                 return EXIT_FAILURE;
 
+            // Memory usage calculation
+            size_t memory_matrix_std = matrix_std_memory(&matrix_std);
+            size_t memory_matrix_mtd = matrix_mtd_memory(&matrix_mtd);
+            size_t memory_vector_mtd = vector_mtd_memory(&vector_mtd);
+            size_t memory_vector_std = vector_std_memory(&vector_std);
+
             // MTD Multiplication
             unsigned long long time_mtd = 0;
             for (int k = 0; k < n_times; k++)
@@ -66,18 +72,24 @@ int complexity_analisys(void)
             data_std[i][j] = time_std / n_times;
 
             // Free allocated memory
+            // printf("\tCheck NonZero: %d\n", matrix_std.matrix[6][48]); // DEBUG
             matrix_std_free(&matrix_std);
             matrix_mtd_free(&matrix_mtd);
             vector_mtd_free(&vector_mtd);
             matrix_std_free(&vector_std);
-            printf("\nПроцент заполнения матрицы: %d\n", percentages[j]);
-            printf("\tВремя SPMM: %f\n", data_mtd[i][j]);
-            printf("\tВремя STD: %f\n", data_std[i][j]);
-            // printf("%d %d\n", i, j);
+            
+            printf("Percentage of matrix filled: %d\n", percentages[j]);
+            printf("\tTime SPMM: %f\n", data_mtd[i][j]);
+            printf("\tTime STD: %f\n", data_std[i][j]);
+            printf("\tИспользуемая память: matrix_std: %zu bytes\n", memory_matrix_std);
+            printf("\tИспользуемая память: matrix_mtd: %zu bytes\n", memory_matrix_mtd);
+            printf("\tИспользуемая память: vector_mtd: %zu bytes\n", memory_vector_mtd);
+            printf("\tИспользуемая память: vector_std: %zu bytes\n\n", memory_vector_std);
         }
     }
     return EXIT_SUCCESS;
 }
+
 
 unsigned long long microseconds_now(void)
 {
@@ -104,52 +116,43 @@ int read_data(char *filename, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd
     return EXIT_SUCCESS;
 }
 
-void matrix_std_free(matrix_std_t *matrix_std)
+// MEMORY CALCS
+size_t matrix_std_memory(matrix_std_t *matrix)
 {
-    if (matrix_std->matrix) {
-        for (int i = 0; i < matrix_std->rows; i++) {
-            if (matrix_std->matrix[i]) {
-                free(matrix_std->matrix[i]);
-            }
-        }
-        free(matrix_std->matrix);
+    size_t memory = 0;
+    for (int i = 0; i < matrix->rows; i++)
+    {
+        memory += matrix->cols * sizeof(int);
     }
-    matrix_std->matrix = NULL;
-    matrix_std->rows = 0;
-    matrix_std->cols = 0;
+    memory += sizeof(int *) * matrix->rows + sizeof(matrix_std_t);
+    return memory;
 }
 
-void matrix_mtd_free(matrix_mtd_t *matrix_mtd)
+size_t matrix_mtd_memory(matrix_mtd_t *matrix)
 {
-    if (matrix_mtd->A) {
-        free(matrix_mtd->A);
-    }
-    if (matrix_mtd->JA) {
-        free(matrix_mtd->JA);
-    }
-    if (matrix_mtd->IA) {
-        free(matrix_mtd->IA);
-    }
-    matrix_mtd->A = NULL;
-    matrix_mtd->JA = NULL;
-    matrix_mtd->IA = NULL;
-    matrix_mtd->A_len = 0;
-    matrix_mtd->JA_len = 0;
-    matrix_mtd->IA_len = 0;
-    matrix_mtd->rows = 0;
-    matrix_mtd->cols = 0;
+    size_t memory = sizeof(int) * matrix->A_len;
+    memory += sizeof(int) * matrix->JA_len;
+    memory += sizeof(int) * matrix->IA_len;
+    memory += sizeof(matrix_mtd_t);
+    return memory;
 }
 
-void vector_mtd_free(vector_mtd_t *vector_mtd)
+size_t vector_mtd_memory(vector_mtd_t *vector)
 {
-    if (vector_mtd->A) {
-        free(vector_mtd->A);
-    }
-    if (vector_mtd->VA) {
-        free(vector_mtd->VA);
-    }
-    vector_mtd->A = NULL;
-    vector_mtd->VA = NULL;
-    vector_mtd->rows = 0;
-    vector_mtd->elems_amount = 0;
+    size_t memory = sizeof(int) * vector->rows;
+    memory += sizeof(int) * vector->elems_amount;
+    memory += sizeof(vector_mtd_t);
+    return memory;
 }
+
+size_t vector_std_memory(matrix_std_t *vector)
+{
+    size_t memory = 0;
+    for (int i = 0; i < vector->rows; i++)
+    {
+        memory += vector->cols * sizeof(int);
+    }
+    memory += sizeof(int *) * vector->rows + sizeof(matrix_std_t);
+    return memory;
+}
+
