@@ -4,15 +4,22 @@ int matrix_vector_multiply(matrix_mtd_t *matrix, vector_mtd_t *vector, vector_mt
 {
     // printf("\tMatrix cols: %d, Vector Rows: %d\n", matrix->cols, vector->rows);
     if (matrix->cols != vector->rows)
+    {
+        // printf("Error sizes not equal\n");
         return EXIT_FAILURE;
+    }
     // puts("\tPassed Size Check");
     result->A = (int *)calloc(matrix->rows, sizeof(int));
     if (!result->A)
+    {
+        // printf("Error allocating memory A\n");
         return EXIT_FAILURE;
+    }
     // puts("\tA Alloc passed");
     result->VA = (int *)calloc(matrix->rows, sizeof(int));
     if (!result->VA)
     {
+        // printf("Error allocating memory VA\n");
         free(result->A);
         return EXIT_FAILURE;
     }
@@ -46,7 +53,11 @@ int matrix_vector_multiply(matrix_mtd_t *matrix, vector_mtd_t *vector, vector_mt
     {
         // puts("\n\tNeeded to reallocate\n");
         if (vector_realloc(result, result->elems_amount))
+        {
+            // printf("%d %d\n", result->elems_amount, matrix->rows);
+            // printf("Error Realloc\n");
             return EXIT_FAILURE;
+        }
         // puts("\tResult Realloc Passed");
     }
     return EXIT_SUCCESS;

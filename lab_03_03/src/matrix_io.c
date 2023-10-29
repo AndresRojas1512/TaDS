@@ -1,44 +1,44 @@
 #include "matrix_io.h"
 
-int read_sizes(int *m, int *n) // DONE
+int read_sizes(FILE *file ,int *m, int *n) // done file
 {
-    printf("Input rows and cols:\n");
-    if (scanf("%d %d", m, n) != 2)
+    UF_PRINT("Input rows and cols:\n");
+    if (fscanf(file, "%d %d", m, n) != 2)
         return ERROR_M_SIZES_READ;
     if (*m <= 0 || *n <= 0)
         return ERROR_M_SIZES_RANGE;
     return EXIT_SUCCESS;
 }
 
-int read_elems_amount(int *n) // DONE
+int read_elems_amount(FILE *file, int *n) // done file
 {
-    printf("Input elements amount:\n");
-    if (scanf("%d", n) != 1)
+    UF_PRINT("Input elements amount:\n");
+    if (fscanf(file, "%d", n) != 1)
         return EXIT_FAILURE;
     if (*n <= 0)
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }
 
-int read_data_single(int *x, int *y, int *data, int rows, int cols, int i) // DONE
+int read_data_single(FILE *file, int *x, int *y, int *data, int rows, int cols, int i) // done file
 {
-    printf("Data Input %d:\n", i);
-    printf("\tEnter row and col idx: ");
-    if (scanf("%d %d", x, y) != 2) // coords
+    UF_PRINT("Data Input %d:\n", i);
+    UF_PRINT("\tEnter row and col idx: ");
+    if (fscanf(file, "%d %d", x, y) != 2) // coords
         return EXIT_FAILURE;
     if (*x < 0 || *y < 0) // check range
         return EXIT_FAILURE;
     if (*x >= rows || *y >= cols) // check range
         return EXIT_FAILURE;
-    printf("\tEnter val: ");
-    if (scanf("%d", data) != 1)
+    UF_PRINT("\tEnter val: ");
+    if (fscanf(file, "%d", data) != 1)
         return EXIT_FAILURE;
     if (!data)
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }
 
-int read_data_general(int **matrix_data, int elems_amount, int rows, int cols) // DONE
+int read_data_general(FILE *file, int **matrix_data, int elems_amount, int rows, int cols) // done file
 {
     int x, y, data;
     int i = 0;
@@ -49,14 +49,14 @@ int read_data_general(int **matrix_data, int elems_amount, int rows, int cols) /
         int is_repeated;
         do
         {
-            if (read_data_single(&x, &y, &data, rows, cols, i))
+            if (read_data_single(file, &x, &y, &data, rows, cols, i))
                 return EXIT_FAILURE;
             is_repeated = check_repeated(matrix_data, i, x, y, &rep_idx);
             if (is_repeated)
             {
-                printf("Rep XY in pos: (%d, %d)\n", matrix_data[rep_idx][0], matrix_data[rep_idx][1]);
-                printf("Enter 1 to replace, else 0: ");
-                if (scanf("%d", &flag_repl) != 1)
+                UF_PRINT("Rep XY in pos: (%d, %d)\n", matrix_data[rep_idx][0], matrix_data[rep_idx][1]);
+                UF_PRINT("Enter 1 to replace, else 0: ");
+                if (fscanf(file ,"%d", &flag_repl) != 1)
                     return EXIT_FAILURE;
                 if (flag_repl)
                 {

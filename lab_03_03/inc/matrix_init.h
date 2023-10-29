@@ -6,8 +6,9 @@
 #include "matrix_vector_t.h"
 #include "matrix_io.h"
 #include "matrix_mem.h"
+#include "user_interface.h"
 
-int matrix_init(matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd);
+int matrix_init(FILE *file, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd);
 int matrix_std_init(matrix_std_t *matrix_std, int **matrix_data, int rows, int cols, int elems_amount);
 int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int rows, int cols);
 int check_row_elems(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amount, int idx_IA);

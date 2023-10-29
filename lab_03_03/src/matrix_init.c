@@ -1,23 +1,23 @@
 #include "matrix_init.h"
 
-int matrix_init(matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
+int matrix_init(FILE *file, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd)
 {
     int rows, cols;
     int elems_amount;
 
-    if (read_sizes(&rows, &cols))
+    if (read_sizes(file, &rows, &cols))
         return EXIT_FAILURE;
-    if (read_elems_amount(&elems_amount))
+    if (read_elems_amount(file, &elems_amount))
         return EXIT_FAILURE;
     // HO: Helper data
     int **matrix_data = matrix_alloc_std(elems_amount, DATA_SIZE_STD);
     if (!matrix_data)
         return EXIT_FAILURE;
     matrix_data_init(matrix_data, elems_amount);
-    if (read_data_general(matrix_data, elems_amount, rows, cols))
+    if (read_data_general(file, matrix_data, elems_amount, rows, cols))
         return EXIT_FAILURE;
     matrix_data_sort(matrix_data, elems_amount);
-    matrix_data_output(matrix_data, elems_amount);
+    // matrix_data_output(matrix_data, elems_amount);
     // WO: Init Std & Mtd Matrices
     if (matrix_std_init(matrix_std, matrix_data, rows, cols, elems_amount))
         return EXIT_FAILURE;
@@ -92,12 +92,12 @@ int matrix_mtd_init(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_amoun
     matrix_mtd->cols = cols;
     matrix_mtd_import(matrix_mtd, matrix_data, elems_amount);
     vector_IA_init(matrix_mtd, matrix_data);
-    printf("Vector A: ");
-    vector_output(matrix_mtd->A, matrix_mtd->A_len);
-    printf("Vector JA: ");
-    vector_output(matrix_mtd->JA, matrix_mtd->JA_len);
-    printf("Vector IA: ");
-    vector_output(matrix_mtd->IA, matrix_mtd->IA_len);
+    // printf("Vector A: ");
+    // vector_output(matrix_mtd->A, matrix_mtd->A_len);
+    // printf("Vector JA: ");
+    // vector_output(matrix_mtd->JA, matrix_mtd->JA_len);
+    // printf("Vector IA: ");
+    // vector_output(matrix_mtd->IA, matrix_mtd->IA_len);
     return EXIT_SUCCESS;
 }
 
