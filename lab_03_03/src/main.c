@@ -48,10 +48,25 @@ int main(void)
             // printf("\tRC after vector_mtd init: %d\n", exit_code);
             if (!exit_code)
             {
+                // Calculate Memory usage
+                size_t memory_matrix_std = matrix_std_memory(&matrix_std_A);
+                size_t memory_matrix_mtd = matrix_mtd_memory(&matrix_mtd_A);
+                size_t memory_vector_mtd = vector_mtd_memory(&vector_mtd);
+                size_t memory_vector_std = vector_std_memory(&vector_std);
+
+                int n_times = 10;
+                double time_mtd = 0;
                 if (vector_fields_alloc(&result, matrix_std_A.rows))
                     return EXIT_FAILURE;
-                exit_code = matrix_vector_multiply(&matrix_mtd_A, &vector_mtd, &result);
-                
+
+                // SPMM MULTIPLICATION
+                sort_vector_mtd_vectors(&vector_mtd);
+                if (multiplication_mtd_measurement(&matrix_mtd_A, &vector_mtd, &result, n_times, &time_mtd))
+                    return EXIT_FAILURE;
+                // printf("\nMean time MTD multiplication: %lf microseconds\n", time_mtd);
+
+
+                // Realloc if needed the result mtd vector
                 if (result.elems_amount < matrix_mtd_A.rows)
                 {
                     if (vector_realloc(&result, result.elems_amount))
@@ -60,6 +75,7 @@ int main(void)
 
                 if (!exit_code)
                 {
+                    double time_std = 0;
                     printf("\n\tРезультаты SPMM умножения в формате 'Вектор-столбец':\n");
                     printf("Вектор A: ");
                     vector_output(result.A, result.elems_amount);
@@ -75,9 +91,31 @@ int main(void)
                     // STANDARD MATRIX MULTIPLICATION
                     if (matrix_alloc_struct_std(&result_std_mult_std, matrix_std_A.rows, 1))
                         return EXIT_FAILURE;
-                    matrix_multiply_standard(&matrix_std_A, &vector_std, &result_std_mult_std);
+
+                    if (multiplication_std_measurement(&matrix_std_A, &vector_std, &result_std_mult_std, n_times, &time_std))
+                        return EXIT_FAILURE;
+                    // matrix_multiply_standard(&matrix_std_A, &vector_std, &result_std_mult_std);
+
+                    // Memory usage result
+                    size_t memory_result_mtd = vector_mtd_memory(&result);
+                    size_t memory_result_std = vector_std_memory(&result_std);
+
                     printf("\n\tРезультаты стандартного умножения:\n");
                     matrix_std_output(&result_std_mult_std);
+
+                    // Memory usage and time print
+                    printf("\tВремя занимаемое STD умножения: %lf микросекунды\n", time_std);
+                    printf("\tВремя занимаемое SPMM умножения: %lf микросекунды\n", time_mtd);
+
+                    printf("\tИспользуемая память: matrix_spm: %zu bytes\n", memory_matrix_mtd);
+                    printf("\tИспользуемая память: matrix_std: %zu bytes\n", memory_matrix_std);
+
+                    printf("\tИспользуемая память: vector_spm: %zu bytes\n", memory_vector_mtd);
+                    printf("\tИспользуемая память: vector_std: %zu bytes\n", memory_vector_std);
+
+                    printf("\tИспользуемая память: result_spm: %zu bytes\n", memory_result_mtd);
+                    printf("\tИспользуемая память: result_std: %zu bytes\n\n", memory_result_std);
+                    
                 }
                 matrix_std_free(&matrix_std_A);
                 matrix_mtd_free(&matrix_mtd_A);

@@ -1,5 +1,7 @@
 #include "complexity_analisys.h"
 
+void output_table(double *std_time, double *spmm_time, size_t *std_memory, size_t *spmm_memory, int *sizes, int *percentages, int n);
+
 int complexity_analisys(void)
 {
     int matrix_sizes[] = {100, 200, 300, 400};
@@ -12,6 +14,12 @@ int complexity_analisys(void)
     {
         int size = matrix_sizes[i];
         printf("Matrix size: [%d x %d]\n", size, size);
+
+        // double std_time[PERCENTAGES_N];
+        // double spmm_time[PERCENTAGES_N];
+        // size_t std_memory[PERCENTAGES_N];
+        // size_t spmm_memory[PERCENTAGES_N];
+
         for (int j = 0; j < PERCENTAGES_N; j++)
         {
             char filename[50];
@@ -79,12 +87,13 @@ int complexity_analisys(void)
             matrix_std_free(&vector_std);
             
             printf("Percentage of matrix filled: %d\n", percentages[j]);
-            printf("\tTime SPMM: %f\n", data_mtd[i][j]);
-            printf("\tTime STD: %f\n", data_std[i][j]);
+            printf("\tВремя SPMM: %f\n", data_mtd[i][j]);
+            printf("\tВремя STD: %f\n", data_std[i][j]);
             printf("\tИспользуемая память: matrix_std: %zu bytes\n", memory_matrix_std);
             printf("\tИспользуемая память: matrix_mtd: %zu bytes\n", memory_matrix_mtd);
             printf("\tИспользуемая память: vector_mtd: %zu bytes\n", memory_vector_mtd);
             printf("\tИспользуемая память: vector_std: %zu bytes\n\n", memory_vector_std);
+            // output_table(std_time, spmm_time, std_memory, spmm_memory, matrix_sizes, percentages, PERCENTAGES_N);
         }
     }
     return EXIT_SUCCESS;
@@ -155,4 +164,3 @@ size_t vector_std_memory(matrix_std_t *vector)
     memory += sizeof(int *) * vector->rows + sizeof(matrix_std_t);
     return memory;
 }
-

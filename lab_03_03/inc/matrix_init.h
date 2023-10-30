@@ -20,5 +20,7 @@ void swap(int *a, int *b);
 void matrix_mtd_import(matrix_mtd_t *matrix_mtd, int **matrix_data, int elems_count);
 void vector_IA_init(matrix_mtd_t *matrix_mtd, int **matrix_data);
 void fill_negatives(matrix_mtd_t *matrix_mtd);
+void swap_vector(int *a, int *b);
+void sort_vector_mtd_vectors(vector_mtd_t *vector_mtd);
 
 #endif

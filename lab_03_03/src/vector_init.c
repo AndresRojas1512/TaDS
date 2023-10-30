@@ -151,3 +151,24 @@ int result_std_import(matrix_std_t *result_std, vector_mtd_t *result_mtd)
     return EXIT_SUCCESS;
 }
 
+void swap_vector(int *a, int *b)
+{
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+}
+
+void sort_vector_mtd_vectors(vector_mtd_t *vector_mtd)
+{
+    for (int i = 0; i < vector_mtd->elems_amount - 1; i++)
+    {
+        for (int j = 0; j < vector_mtd->elems_amount - i - 1; j++)
+        {
+            if (vector_mtd->VA[j] > vector_mtd->VA[j + 1])
+            {
+                swap_vector(&vector_mtd->VA[j], &vector_mtd->VA[j + 1]);
+                swap_vector(&vector_mtd->A[j], &vector_mtd->A[j + 1]);
+            }
+        }
+    }
+}

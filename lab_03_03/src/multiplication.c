@@ -59,3 +59,34 @@ void matrix_multiply_standard(matrix_std_t *matrix_a, matrix_std_t *matrix_b, ma
     matrix_c->rows = matrix_a->rows;
     matrix_c->cols = matrix_b->cols;
 }
+
+int multiplication_mtd_measurement(matrix_mtd_t *matrix_mtd, vector_mtd_t *vector_mtd, vector_mtd_t *result_mtd, int n_times, double *time_mtd)
+{
+    *time_mtd = 0;
+    int exit_code = EXIT_SUCCESS;
+    for (int i = 0; i < n_times && !exit_code; i++)
+    {
+        unsigned long long beg = microseconds_now();
+        exit_code = matrix_vector_multiply(matrix_mtd, vector_mtd, result_mtd);
+        unsigned long long end = microseconds_now();
+        *time_mtd += (double)(end - beg);
+    }
+    *time_mtd /= n_times;
+    return exit_code;
+}
+
+int multiplication_std_measurement(matrix_std_t *matrix_std, matrix_std_t *vector_std, matrix_std_t *result_std_mult_std, int n_times, double *time_std)
+{
+    *time_std = 0;
+    if (matrix_std->cols != vector_std->rows)
+        return EXIT_FAILURE;
+    for (int i = 0; i < n_times; i++)
+    {
+        unsigned long long beg = microseconds_now();
+        matrix_multiply_standard(matrix_std, vector_std, result_std_mult_std);
+        unsigned long long end = microseconds_now();
+        *time_std += (double)(end - beg);
+    }
+    *time_std /= n_times;
+    return EXIT_SUCCESS;
+}
