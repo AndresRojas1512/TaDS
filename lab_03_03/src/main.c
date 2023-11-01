@@ -52,7 +52,7 @@ int main(void)
                 size_t memory_matrix_std = matrix_std_memory(&matrix_std_A);
                 size_t memory_matrix_mtd = matrix_mtd_memory(&matrix_mtd_A);
                 size_t memory_vector_mtd = vector_mtd_memory(&vector_mtd);
-                size_t memory_vector_std = vector_std_memory(&vector_std);
+                size_t memory_vector_std = vector_std_memory(&vector_mtd);
 
                 int n_times = 10;
                 double time_mtd = 0;
@@ -75,6 +75,11 @@ int main(void)
 
                 if (!exit_code)
                 {
+                    printf("DEBUG: A JA IA:\n");
+                    vector_output(matrix_mtd_A.A, matrix_mtd_A.A_len);
+                    vector_output(matrix_mtd_A.JA, matrix_mtd_A.JA_len);
+                    vector_output(matrix_mtd_A.IA, matrix_mtd_A.IA_len);
+                    printf("END DEBUG: A JA IA:\n");
                     double time_std = 0;
                     printf("\n\tРезультаты SPMM умножения в формате 'Вектор-столбец':\n");
                     printf("Вектор A: ");
@@ -85,8 +90,8 @@ int main(void)
                     // printf("After Mult Elems Amount: %d\n", result.elems_amount);
                     if (result_std_import(&result_std, &result))
                         return EXIT_FAILURE;
-                    printf("\n\tРезультаты SPMM умножения в стандартом формате:\n");
-                    matrix_std_output(&vector_std);
+                    // printf("\n\tРезультаты SPMM умножения в стандартом формате:\n");
+                    // matrix_std_output(&vector_std);
 
                     // STANDARD MATRIX MULTIPLICATION
                     if (matrix_alloc_struct_std(&result_std_mult_std, matrix_std_A.rows, 1))
@@ -97,8 +102,8 @@ int main(void)
                     // matrix_multiply_standard(&matrix_std_A, &vector_std, &result_std_mult_std);
 
                     // Memory usage result
-                    size_t memory_result_mtd = vector_mtd_memory(&result);
-                    size_t memory_result_std = vector_std_memory(&result_std);
+                    // size_t memory_result_mtd = vector_mtd_memory(&result);
+                    // size_t memory_result_std = vector_std_memory(&result_std);
 
                     printf("\n\tРезультаты стандартного умножения:\n");
                     matrix_std_output(&result_std_mult_std);
@@ -107,14 +112,14 @@ int main(void)
                     printf("\tВремя занимаемое STD умножения: %lf микросекунды\n", time_std);
                     printf("\tВремя занимаемое SPMM умножения: %lf микросекунды\n", time_mtd);
 
-                    printf("\tИспользуемая память: matrix_spm: %zu bytes\n", memory_matrix_mtd);
-                    printf("\tИспользуемая память: matrix_std: %zu bytes\n", memory_matrix_std);
+                    // printf("\tИспользуемая память: matrix_spm: %zu bytes\n", memory_matrix_mtd);
+                    // printf("\tИспользуемая память: matrix_std: %zu bytes\n", memory_matrix_std);
 
-                    printf("\tИспользуемая память: vector_spm: %zu bytes\n", memory_vector_mtd);
-                    printf("\tИспользуемая память: vector_std: %zu bytes\n", memory_vector_std);
+                    // printf("\tИспользуемая память: vector_spm: %zu bytes\n", memory_vector_mtd);
+                    // printf("\tИспользуемая память: vector_std: %zu bytes\n", memory_vector_std);
 
-                    printf("\tИспользуемая память: result_spm: %zu bytes\n", memory_result_mtd);
-                    printf("\tИспользуемая память: result_std: %zu bytes\n\n", memory_result_std);
+                    // printf("\tИспользуемая память: result_spm: %zu bytes\n", memory_result_mtd);
+                    // printf("\tИспользуемая память: result_std: %zu bytes\n\n", memory_result_std);
                     
                 }
                 matrix_std_free(&matrix_std_A);

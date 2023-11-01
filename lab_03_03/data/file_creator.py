@@ -1,7 +1,7 @@
 import os
 import random
 
-sizes = [100, 200, 300, 400, 500]
+sizes = [100, 200, 300, 400]
 percentages = [1, 10, 25, 50, 75, 100]
 
 for size in sizes:

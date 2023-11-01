@@ -5,7 +5,7 @@ void output_table(double *std_time, double *spmm_time, size_t *std_memory, size_
 int complexity_analisys(void)
 {
     int matrix_sizes[] = {100, 200, 300, 400};
-    int percentages[] = {1, 10, 25, 50, 75, 100};
+    int percentages[] = {1, 5, 10, 15, 20, 25, 50, 75, 100};
     double data_std[MATRIX_SIZES][PERCENTAGES_N];
     double data_mtd[MATRIX_SIZES][PERCENTAGES_N];
     int n_times = 10;
@@ -40,7 +40,7 @@ int complexity_analisys(void)
             size_t memory_matrix_std = matrix_std_memory(&matrix_std);
             size_t memory_matrix_mtd = matrix_mtd_memory(&matrix_mtd);
             size_t memory_vector_mtd = vector_mtd_memory(&vector_mtd);
-            size_t memory_vector_std = vector_std_memory(&vector_std);
+            size_t memory_vector_std = vector_std_memory(&vector_mtd);
 
             // MTD Multiplication
             unsigned long long time_mtd = 0;
@@ -120,13 +120,15 @@ int read_data(char *filename, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd
         return EXIT_FAILURE;
     if (vector_init(file, vector_mtd, vector_std))
         return EXIT_FAILURE;
+    // printf("DEBUG: Matrix sizes read: %d %d\n", matrix_std->rows, matrix_std->cols);
+    // printf("DEBUG: Vector sizes read: %d %d\n", vector_std->rows, vector_std->cols);
     printf("Успешно: Файл открыт: %s\n", filename);
     fclose(file);
     return EXIT_SUCCESS;
 }
 
 // MEMORY CALCS
-size_t matrix_std_memory(matrix_std_t *matrix)
+size_t matrix_std_memory(matrix_std_t *matrix) // done
 {
     size_t memory = 0;
     for (int i = 0; i < matrix->rows; i++)
@@ -137,7 +139,7 @@ size_t matrix_std_memory(matrix_std_t *matrix)
     return memory;
 }
 
-size_t matrix_mtd_memory(matrix_mtd_t *matrix)
+size_t matrix_mtd_memory(matrix_mtd_t *matrix) // done
 {
     size_t memory = sizeof(int) * matrix->A_len;
     memory += sizeof(int) * matrix->JA_len;
@@ -146,21 +148,17 @@ size_t matrix_mtd_memory(matrix_mtd_t *matrix)
     return memory;
 }
 
-size_t vector_mtd_memory(vector_mtd_t *vector)
+size_t vector_mtd_memory(vector_mtd_t *vector) // done
 {
-    size_t memory = sizeof(int) * vector->rows;
-    memory += sizeof(int) * vector->elems_amount;
-    memory += sizeof(vector_mtd_t);
+    size_t memory = 0;
+    memory += 2 * (sizeof(int) * vector->elems_amount);
+    // memory += sizeof(vector_mtd_t);
     return memory;
 }
 
-size_t vector_std_memory(matrix_std_t *vector)
+size_t vector_std_memory(vector_mtd_t *vector_mtd) // done
 {
     size_t memory = 0;
-    for (int i = 0; i < vector->rows; i++)
-    {
-        memory += vector->cols * sizeof(int);
-    }
-    memory += sizeof(int *) * vector->rows + sizeof(matrix_std_t);
+    memory = sizeof(int) * vector_mtd->rows;
     return memory;
 }

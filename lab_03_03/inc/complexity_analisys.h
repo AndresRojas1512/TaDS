@@ -24,7 +24,7 @@ int read_data(char *filename, matrix_std_t *matrix_std, matrix_mtd_t *matrix_mtd
 size_t matrix_std_memory(matrix_std_t *matrix);
 size_t matrix_mtd_memory(matrix_mtd_t *matrix);
 size_t vector_mtd_memory(vector_mtd_t *vector);
-size_t vector_std_memory(matrix_std_t *vector);
+size_t vector_std_memory(vector_mtd_t *vector_mtd);
 
 
 #endif

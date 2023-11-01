@@ -27,8 +27,8 @@ typedef struct vector_mtd_t
 {
     int *A;
     int *VA;
-    int rows; // check if multiplication is possible
-    int elems_amount; // size of both vectors
+    int rows;
+    int elems_amount;
 } vector_mtd_t;
 
 #endif
