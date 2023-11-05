@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#define STACK_SIZE 10000
+#define STACK_SIZE 100000
 
 #define ERROR_READ_SIZE_RANGE 100
 #define ERROR_READ_UB 101

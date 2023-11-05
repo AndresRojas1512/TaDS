@@ -8,7 +8,7 @@
 #include <time.h>
 #include <sys/time.h>
 
-#define N_FILES 7
+#define N_FILES 11
 #define N_EXP 10
 #define FILEPATH_LEN 20
 
@@ -17,5 +17,9 @@
 
 int complexity_analysis(void);
 int import_data(char *filepath);
+int import_data_to_array(char *filepath, int *data_array, int n_elements);
+void array_print(unsigned long long *array, int n);
+unsigned long long microseconds_now(void);
+void array_init_zeros(unsigned long long *array, int n);
 
 #endif
