@@ -1,0 +1,6 @@
+#ifndef EXIT_CODES_H
+#define EXIT_CODES_H
+
+#define ERROR_READ_STACK_SIZE 100
+#define ERROR_READ_PUSH_VALUE 101
+#endif

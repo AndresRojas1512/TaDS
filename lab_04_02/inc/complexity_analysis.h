@@ -1,0 +1,21 @@
+#ifndef COMPLEXITY_ANALYSIS
+#define COMPLEXITY_ANALYSIS
+
+#include <stdio.h>
+#include <stdlib.h>
+#include "stack_ll.h"
+#include "stack_sa.h"
+#include <time.h>
+#include <sys/time.h>
+
+#define N_FILES 7
+#define N_EXP 10
+#define FILEPATH_LEN 20
+
+#define ERROR_CANNOT_OPEN_FILE 30
+#define ERROR_READ_FILE_CONTENT 31
+
+int complexity_analysis(void);
+int import_data(char *filepath);
+
+#endif
