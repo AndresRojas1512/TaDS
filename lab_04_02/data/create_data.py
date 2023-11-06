@@ -3,7 +3,7 @@ def create_and_write_file(filename, count):
         for number in range(1, count + 1):
             f.write(str(number) + '\n')
 
-counts = [100, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+counts = [1000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000]
 for count in counts:
     filename = f'{count}.txt'
     create_and_write_file(filename, count)
