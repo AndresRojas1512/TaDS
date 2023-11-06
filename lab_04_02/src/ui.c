@@ -2,16 +2,17 @@
 
 void menu(void)
 {
-    puts("1. Init Stack");
-    puts("2. Push Stack A");
-    puts("3. Push Stack B");
-    puts("4. Pop Stack A");
-    puts("5. Pop Stack B");
-    puts("6. Output Struct");
-    puts("7. Push Linked List Stack");
-    puts("8. Pop Linked List Stack");
-    puts("9. Complexity Analysis");
-    puts("0. Выход");
+    printf("\n");
+    puts("1. Инициализация размера массива двух стеков (используется для тестирования переполнения).");
+    puts("2. Добавление в стек А.");
+    puts("3. Добавление в стек В.");
+    puts("4. Удаления из стека А.");
+    puts("5. Удаление из стека В.");
+    puts("6. Добавление в стек (формат односвязного списка)");
+    puts("7. Удаление из стека (формат односвязного списка).");
+    puts("8. Печать свободных облостей.");
+    puts("9. Анализ эффективности.");
+    puts("0. Выход.");
 }
 
 int input_choice(int *choice)
@@ -21,7 +22,7 @@ int input_choice(int *choice)
     if (scanf("%d", choice) != 1)
         return ERROR_CHOICE_READ_UB;
     clean_buffer();
-    if (*choice > 9 || *choice < 0)
+    if (*choice > 10 || *choice < 0)
         return ERROR_CHOICE_READ_RANGE;
     return EXIT_SUCCESS;
 }

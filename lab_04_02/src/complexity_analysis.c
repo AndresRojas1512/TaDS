@@ -4,11 +4,22 @@ int complexity_analysis(void)
 {
     int exit_code = EXIT_SUCCESS;
     FILE *file;
+    int popped_value;
     stack_static_array_t stack_sa;
+    struct ListNode *stack_ll = NULL;
     int elements[N_FILES] = {100, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
     int data_array[STACK_SIZE];
-    unsigned long long data_time[N_FILES];
-    array_init_zeros(data_time, N_FILES);
+    unsigned long long data_time_sa[N_FILES];
+    unsigned long long data_time_ll[N_FILES];
+    array_init_zeros(data_time_sa, N_FILES);
+    array_init_zeros(data_time_ll, N_FILES);
+
+    unsigned long long cleanup_time_sa[N_FILES];
+    unsigned long long cleanup_time_ll[N_FILES];
+    array_init_zeros(cleanup_time_sa, N_FILES);
+    array_init_zeros(cleanup_time_ll, N_FILES);
+
+    int num_trials = 30;
 
     for (int i = 0; i < N_FILES; i++)
     {
@@ -17,23 +28,65 @@ int complexity_analysis(void)
         exit_code = import_data_to_array(filepath, data_array, elements[i]);
         if (!exit_code)
         {
-            // TIME FOR STATIC STACK 100
-            stack_sa_init(&stack_sa, elements[i]);
-            unsigned long long beg = microseconds_now();
-            // Push to A
-            for (int j = 0; j < (elements[i] / 2); j++)
-                exit_code = push_A(&stack_sa, data_array[j]);
-            // Push to B
-            for (int j = (elements[i] / 2); j < elements[i]; j++)
-                exit_code = push_B(&stack_sa, data_array[j]);
-            unsigned long long end = microseconds_now();
-            data_time[i] = end - beg;
-            // printf("\n\tStack %d\n", elements[i]);
-            // stack_sa_output(&stack_sa);
+            unsigned long long total_time_sa = 0;
+            unsigned long long total_time_ll = 0;
+
+            for (int trial = 0; trial < num_trials; trial++)
+            {
+                // TIME FOR STATIC STACK PUSH
+                stack_sa_init(&stack_sa, elements[i]);
+                unsigned long long beg_sa = microseconds_now();
+                for (int j = 0; j < (elements[i] / 2); j++) // Push to A
+                    exit_code = push_A(&stack_sa, data_array[j]);
+                for (int j = (elements[i] / 2); j < elements[i]; j++) // Push to B
+                    exit_code = push_B(&stack_sa, data_array[j]);
+                unsigned long long end_sa = microseconds_now();
+                total_time_sa += end_sa - beg_sa;
+
+                // TIME FOR STATIC STACK CLEANUP
+                unsigned long long beg_cleanup_sa = microseconds_now();
+                while (!is_empty_A(&stack_sa) || !is_empty_B(&stack_sa))
+                {
+                    if (!is_empty_A(&stack_sa))
+                        pop_A(&stack_sa, &popped_value);
+                    if (!is_empty_B(&stack_sa))
+                        pop_B(&stack_sa, &popped_value);
+                }
+                unsigned long long end_cleanup_sa = microseconds_now();
+                cleanup_time_sa[i] += end_cleanup_sa - beg_cleanup_sa;
+
+                // TIME FOR LINKED LIST STACK PUSH
+                unsigned long long beg_ll = microseconds_now();
+                for (int j = 0; j < elements[i]; j++)
+                {
+                    exit_code = push(&stack_ll, data_array[j]);
+                    if (exit_code)
+                        break;
+                }
+                unsigned long long end_ll = microseconds_now();
+                total_time_ll += end_ll - beg_ll;
+                
+                // TIME FOR LINKED LIST STACK CLEANUP
+                unsigned long long beg_cleanup_ll = microseconds_now();
+                while (stack_ll != NULL)
+                    pop_ca(&stack_ll);
+                unsigned long long end_cleanup_ll = microseconds_now();
+                cleanup_time_ll[i] += end_cleanup_ll - beg_cleanup_ll;
+            }
+            data_time_sa[i] = total_time_sa / num_trials;
+            data_time_ll[i] = total_time_ll / num_trials;
+            cleanup_time_sa[i] = cleanup_time_sa[i] / num_trials;
+            cleanup_time_ll[i] = cleanup_time_ll[i] / num_trials;
         }
     }
-    printf("Data time: ");
-    array_print(data_time, N_FILES);
+    printf("Data time (Static Array): ");
+    array_print(data_time_sa, N_FILES);
+    printf("Data time (Linked List): ");
+    array_print(data_time_ll, N_FILES);
+    printf("Clean time (Static Array): ");
+    array_print(cleanup_time_sa, N_FILES);
+    printf("Clean time (Linked List): ");
+    array_print(cleanup_time_ll, N_FILES);
     return exit_code;
 }
 
@@ -73,19 +126,21 @@ void array_init_zeros(unsigned long long *array, int n)
         array[i] = 0;
 }
 
-int import_data(char *filepath)
+void pop_ca(struct ListNode **top)
 {
-    FILE *file = fopen(filepath, "r");
-    if (!file)
-        return ERROR_CANNOT_OPEN_FILE;
-    printf("\tSuccess: %s\n", filepath);
-    int n_amount;
-    if (fscanf(file, "%d\n", &n_amount) != 1)
-    {
-        printf("\tERROR: OPEN FILE\n");
-        return EXIT_FAILURE;
-    }
-    printf("\tN Amount: %d\n", n_amount);
-    rewind(file);
-    return EXIT_SUCCESS;
+    if (!(*top))
+        return;
+    struct ListNode *tmp = *top;
+    (*top) = (*top)->next;
+    free(tmp);
+}
+
+int is_empty_A(stack_static_array_t *stack_sa)
+{
+    return (stack_sa->top_A == -1);
+}
+
+int is_empty_B(stack_static_array_t *stack_sa)
+{
+    return (stack_sa->top_B == stack_sa->stack_size);
 }

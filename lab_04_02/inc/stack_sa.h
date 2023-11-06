@@ -38,7 +38,7 @@ int push_A(stack_static_array_t *stack_sa, int x);
 int push_B(stack_static_array_t *stack_sa, int x);
 
 // Pop Operation
-int pop_A(stack_static_array_t *stack_sa, int *pop_value);
-int pop_B(stack_static_array_t *stack_sa, int *pop_value);
+int pop_A(stack_static_array_t *stack_sa, int *poped_value);
+int pop_B(stack_static_array_t *stack_sa, int *poped_value);
 
 #endif

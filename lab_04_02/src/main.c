@@ -10,86 +10,138 @@ int main(void)
 {
     int exit_code = EXIT_SUCCESS;
     stack_static_array_t stack_sa;
+    free_addresses_t free_addresses;
     int stack_size;
     FILE *file = stdin;
     int choice;
     int x; // the push value
-    int pop_value;
+    int poped_value;
     struct ListNode *top = NULL;
+    stack_sa_init(&stack_sa, STACK_SIZE);
     do
     {
         menu();
         if (input_choice(&choice))
-            puts("\nError: Invalid operation\n");
+            puts("\nОшибка: Введите опцию (0 - 10).\n");
         else
         {
             switch (choice)
             {
             case 1: // Init Stack
-                printf("\nEnter the Stack Size: ");
+                exit_code = EXIT_SUCCESS;
+                printf("\nВведите размер стека: ");
                 exit_code = stack_sa_read_size(file, &stack_size);
                 if (exit_code == ERROR_READ_UB)
-                    printf("\tError: Input Error\n");
+                    printf("\tОшибка: Ввод.\n");
                 else if (exit_code == ERROR_READ_SIZE_RANGE)
-                    printf("\tError: Invalid Size Value\n");
+                    printf("\tОшибка: Невалидное значение.\n");
                 else
                     stack_sa_init(&stack_sa, stack_size);
-                    printf("\tStack Initialized Succesfuly\n");
+                    printf("\tСтек инициализирован успешно.\n");
                 break;
             case 2: // Push A
-                printf("Enter the Value to Push to A: ");
+                exit_code = EXIT_SUCCESS;
+                printf("Введите значение, добавляемого элемента в стек A: ");
                 if (fscanf(file, "%d", &x) != 1)
-                    return ERROR_READ_PUSH_VALUE;
-                exit_code = push_A(&stack_sa, x);
-                if (exit_code == ERROR_STACK_A_OVERFLOW)
-                    printf("\tError: Stack A Overflow\n");
+                {
+                    exit_code = ERROR_READ_PUSH_VALUE;
+                    printf("\tОшибка: Невалидное значение.\n");
+                }
                 if (!exit_code)
-                    printf("\tPush A Succesful!\n");
+                {
+                    exit_code = push_A(&stack_sa, x);
+                    if (exit_code == ERROR_STACK_A_OVERFLOW)
+                        printf("\tОшибка: Переполнение стека A.\n");
+                    if (!exit_code)
+                        printf("\tУспешно: Добавлен элемент в стек А.\n");
+                    printf("Текущее состояние стека:\n");
+                    stack_sa_output(&stack_sa);
+                }
                 break;
             case 3: // Push B
-                printf("Enter the Value to Push to B: ");
+                exit_code = EXIT_SUCCESS;
+                printf("Введите значение, добавляемого элемента в стек B: ");
                 if (fscanf(file, "%d", &x) != 1)
-                    return ERROR_READ_PUSH_VALUE;
-                exit_code = push_B(&stack_sa, x);
-                if (exit_code == ERROR_STACK_B_OVERFLOW)
-                    printf("\tError: Stack B Overflow\n");
+                {
+                    exit_code = ERROR_READ_PUSH_VALUE;
+                    printf("\tОшибка: Невалидное значение.\n");
+                }
                 if (!exit_code)
-                    printf("\tPush B Succesful!\n");
+                {
+                    exit_code = push_B(&stack_sa, x);
+                    if (exit_code == ERROR_STACK_B_OVERFLOW)
+                        printf("\tОшибка: Переполнение стека B.\n");
+                    if (!exit_code)
+                        printf("\tУспешно: Добавлен элемент в стек B.\n");
+                    printf("Текущее состояние стека:\n");
+                    stack_sa_output(&stack_sa);
+                }
                 break;
             case 4: // Pop Stack A
-                exit_code = pop_A(&stack_sa, &pop_value);
+                exit_code = EXIT_SUCCESS;
+                exit_code = pop_A(&stack_sa, &poped_value);
                 if (exit_code == ERROR_STACK_A_UNDERFLOW)
-                    printf("Stack A Underflow\n");
+                    printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
                 if (!exit_code)
-                    printf("\tPop Succesful: %d\n", pop_value);
+                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                printf("Текущее состояние стека:\n");
+                    stack_sa_output(&stack_sa);
                 break;
             case 5: // Pop Stack B
-                exit_code = pop_B(&stack_sa, &pop_value);
+                exit_code = EXIT_SUCCESS;
+                exit_code = pop_B(&stack_sa, &poped_value);
                 if (exit_code == ERROR_STACK_B_UNDERFLOW)
-                    printf("Stack B Underflow\n");
+                    printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
                 if (!exit_code)
-                    printf("\tPop Succesful: %d\n", pop_value);
+                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                printf("Текущее состояние стека:\n");
+                    stack_sa_output(&stack_sa);
                 break;
-            case 6: // Output
-                stack_sa_output(&stack_sa);
-                break;
-            case 7: // Push Linked List
-                printf("Enter the Value to Push: ");
+            case 6: // Push Linked List
+                exit_code = EXIT_SUCCESS;
+                printf("Введите значение, добавляемого элемента в стек: ");
                 if (fscanf(file, "%d", &x) != 1)
-                    return ERROR_READ_PUSH_VALUE;
-                exit_code = push(&top, x);
-                stack_ll_print(top);
-                printf("\n");
+                {
+                    exit_code = ERROR_READ_PUSH_VALUE;
+                    printf("\tОшибка: Невалидное значение.\n");
+                }
+                if (!exit_code)
+                {
+                    exit_code = push(&top, x);
+                    if (!exit_code)
+                    {
+                        printf("\tСтек: ");
+                        stack_ll_print(top);
+                        printf("\n");
+                    }
+                }
                 break;
-            case 8: // Pop Linked List
-                pop(&top);
-                stack_ll_print(top);
-                printf("\n");
+            case 7: // Pop Linked List
+                exit_code = EXIT_SUCCESS;
+                exit_code = pop(&top, &poped_value, &free_addresses);
+                if (!exit_code)
+                {
+                    printf("\tСтек: ");
+                    stack_ll_print(top);
+                    printf("\n");
+                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                }
+                else if (exit_code == ERROR_STACK_UNDERFLOW)
+                    printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
+                break;
+            case 8: // Output Freed Addresses
+                exit_code = EXIT_SUCCESS;
+                exit_code = free_addresses_print(&free_addresses);
+                if (exit_code == ERROR_EMPTY_ADDRESSES_ARRAY)
+                    printf("\tПока нет адрессов, удаленных элементов.\n");
                 break;
             case 9:
+                exit_code = EXIT_SUCCESS;
                 complexity_analysis();
+                break;
             }
         }
     }
     while (choice && choice != 9);
+    return EXIT_SUCCESS;
 }

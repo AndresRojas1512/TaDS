@@ -18,8 +18,12 @@
 int complexity_analysis(void);
 int import_data(char *filepath);
 int import_data_to_array(char *filepath, int *data_array, int n_elements);
-void array_print(unsigned long long *array, int n);
 unsigned long long microseconds_now(void);
 void array_init_zeros(unsigned long long *array, int n);
+void pop_ca(struct ListNode **top);
+void array_print(unsigned long long *array, int n);
+
+int is_empty_A(stack_static_array_t *stack_sa);
+int is_empty_B(stack_static_array_t *stack_sa);
 
 #endif

@@ -20,15 +20,15 @@ void stack_sa_init(stack_static_array_t *stack_sa, int stack_size)
 
 void stack_sa_output(stack_static_array_t *stack_sa)
 {
-    printf("Top A: %d\n", stack_sa->top_A);
-    printf("Top B: %d\n", stack_sa->top_B);
-    printf("Stack Size: %d\n", stack_sa->stack_size);
-    printf("Cur_size_A: %d\n", stack_sa->cur_size_A);
-    printf("Cur_size_B: %d\n", stack_sa->cur_size_B);
+    printf("\tИндекс Топ A: %d\n", stack_sa->top_A);
+    printf("\tИндекс Топ B: %d\n", stack_sa->top_B);
+    // printf("Размер стека: %d\n", stack_sa->stack_size);
+    printf("\tРазмер стека А: %d\n", stack_sa->cur_size_A);
+    printf("\tРазмер стека B: %d\n", stack_sa->cur_size_B);
     if (stack_sa_output_A(stack_sa))
-        printf("Empty Stack A\n");
+        printf("Пустой стек А.\n");
     if (stack_sa_output_B(stack_sa))
-        printf("Empty Stack B\n");
+        printf("Пустой стек B.\n");
 }
 
 int push_A(stack_static_array_t *stack_sa, int x)
@@ -49,21 +49,21 @@ int push_B(stack_static_array_t *stack_sa, int x)
     return EXIT_SUCCESS;
 }
 
-int pop_A(stack_static_array_t *stack_sa, int *pop_value)
+int pop_A(stack_static_array_t *stack_sa, int *poped_value)
 {
     if (stack_sa->top_A == -1)
         return ERROR_STACK_A_UNDERFLOW;
-    *pop_value = stack_sa->stack[stack_sa->top_A];
+    *poped_value = stack_sa->stack[stack_sa->top_A];
     stack_sa->top_A--;
     stack_sa->cur_size_A -= 1;
     return EXIT_SUCCESS;
 }
 
-int pop_B(stack_static_array_t *stack_sa, int *pop_value)
+int pop_B(stack_static_array_t *stack_sa, int *poped_value)
 {
     if (stack_sa->top_B == stack_sa->stack_size)
-        return ERROR_STACK_B_OVERFLOW;
-    *pop_value = stack_sa->stack[stack_sa->top_B];
+        return ERROR_STACK_B_UNDERFLOW;
+    *poped_value = stack_sa->stack[stack_sa->top_B];
     stack_sa->top_B++;
     stack_sa->cur_size_B -= 1;
     return EXIT_SUCCESS;
@@ -71,7 +71,7 @@ int pop_B(stack_static_array_t *stack_sa, int *pop_value)
 
 int stack_sa_output_A(stack_static_array_t *stack_sa)
 {
-    printf("Stack A: ");
+    printf("\tStack A: ");
     if (stack_sa->top_A == -1)
         return ERROR_EMPTY_STACK_A;
     for (int i = 0; i <= stack_sa->top_A; i++)
@@ -82,7 +82,7 @@ int stack_sa_output_A(stack_static_array_t *stack_sa)
 
 int stack_sa_output_B(stack_static_array_t *stack_sa)
 {
-    printf("Stack B: ");
+    printf("\tStack B: ");
     if (stack_sa->top_B == stack_sa->stack_size)
         return ERROR_EMPTY_STACK_B;
     for (int i = stack_sa->stack_size - 1; i >= stack_sa->top_B; i--)
