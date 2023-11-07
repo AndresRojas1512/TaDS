@@ -12,7 +12,7 @@
 #define N_EXP 10
 #define FILEPATH_LEN 20
 #define NODE_SIZE (sizeof(struct ListNode))
-#define NUM_TRIALS 30
+#define NUM_TRIALS 100
 #define NUM_PERCENTAGES 12
 #define ERROR_CANNOT_OPEN_FILE 30
 #define ERROR_READ_FILE_CONTENT 31

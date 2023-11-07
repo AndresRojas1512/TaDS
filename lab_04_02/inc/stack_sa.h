@@ -16,7 +16,7 @@
 
 typedef struct stack_static_array_t
 {
-    int stack[STACK_SIZE];
+    double stack[STACK_SIZE];
     int top_A;
     int top_B;
     int stack_size;
@@ -34,11 +34,11 @@ int stack_sa_output_A(stack_static_array_t *stack_sa);
 int stack_sa_output_B(stack_static_array_t *stack_sa);
 
 // Push Operation
-int push_A(stack_static_array_t *stack_sa, int x);
-int push_B(stack_static_array_t *stack_sa, int x);
+int push_A(stack_static_array_t *stack_sa, double x);
+int push_B(stack_static_array_t *stack_sa, double x);
 
 // Pop Operation
-int pop_A(stack_static_array_t *stack_sa, int *poped_value);
-int pop_B(stack_static_array_t *stack_sa, int *poped_value);
+int pop_A(stack_static_array_t *stack_sa, double *poped_value);
+int pop_B(stack_static_array_t *stack_sa, double *poped_value);
 
 #endif

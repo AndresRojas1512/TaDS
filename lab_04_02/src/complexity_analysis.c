@@ -4,7 +4,7 @@ int complexity_analysis(void)
 {
     int exit_code = EXIT_SUCCESS;
     FILE *file;
-    int popped_value;
+    double popped_value;
     stack_static_array_t stack_sa;
     struct ListNode buffer;
     struct ListNode *stack_ll = NULL;

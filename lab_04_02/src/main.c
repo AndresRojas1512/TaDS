@@ -14,15 +14,15 @@ int main(void)
     int stack_size;
     FILE *file = stdin;
     int choice;
-    int x; // the push value
-    int poped_value;
+    double x; // the push value
+    double poped_value;
     struct ListNode *top = NULL;
     stack_sa_init(&stack_sa, STACK_SIZE);
     do
     {
         menu();
         if (input_choice(&choice))
-            puts("\nОшибка: Введите опцию (0 - 10).\n");
+            puts("\nОшибка: Введите опцию (0 - 9).\n");
         else
         {
             switch (choice)
@@ -42,7 +42,7 @@ int main(void)
             case 2: // Push A
                 exit_code = EXIT_SUCCESS;
                 printf("Введите значение, добавляемого элемента в стек A: ");
-                if (fscanf(file, "%d", &x) != 1)
+                if (fscanf(file, "%lf", &x) != 1)
                 {
                     exit_code = ERROR_READ_PUSH_VALUE;
                     printf("\tОшибка: Невалидное значение.\n");
@@ -61,7 +61,7 @@ int main(void)
             case 3: // Push B
                 exit_code = EXIT_SUCCESS;
                 printf("Введите значение, добавляемого элемента в стек B: ");
-                if (fscanf(file, "%d", &x) != 1)
+                if (fscanf(file, "%lf", &x) != 1)
                 {
                     exit_code = ERROR_READ_PUSH_VALUE;
                     printf("\tОшибка: Невалидное значение.\n");
@@ -83,7 +83,7 @@ int main(void)
                 if (exit_code == ERROR_STACK_A_UNDERFLOW)
                     printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
                 if (!exit_code)
-                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                    printf("\tУспешно, удаленный элемент: %f\n", poped_value);
                 printf("Текущее состояние стека:\n");
                     stack_sa_output(&stack_sa);
                 break;
@@ -93,14 +93,14 @@ int main(void)
                 if (exit_code == ERROR_STACK_B_UNDERFLOW)
                     printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
                 if (!exit_code)
-                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                    printf("\tУспешно, удаленный элемент: %f\n", poped_value);
                 printf("Текущее состояние стека:\n");
                     stack_sa_output(&stack_sa);
                 break;
             case 6: // Push Linked List
                 exit_code = EXIT_SUCCESS;
                 printf("Введите значение, добавляемого элемента в стек: ");
-                if (fscanf(file, "%d", &x) != 1)
+                if (fscanf(file, "%lf", &x) != 1)
                 {
                     exit_code = ERROR_READ_PUSH_VALUE;
                     printf("\tОшибка: Невалидное значение.\n");
@@ -124,7 +124,7 @@ int main(void)
                     printf("\tСтек: ");
                     stack_ll_print(top);
                     printf("\n");
-                    printf("\tУспешно, удаленный элемент: %d\n", poped_value);
+                    printf("\tУспешно, удаленный элемент: %f\n", poped_value);
                 }
                 else if (exit_code == ERROR_STACK_UNDERFLOW)
                     printf("\tВнимание: Нет элементов для удаления (Стек пустой).\n");
@@ -142,6 +142,6 @@ int main(void)
             }
         }
     }
-    while (choice && choice != 9);
+    while (choice != 0 && choice != 9);
     return EXIT_SUCCESS;
 }

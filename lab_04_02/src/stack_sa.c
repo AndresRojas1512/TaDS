@@ -31,7 +31,7 @@ void stack_sa_output(stack_static_array_t *stack_sa)
         printf("Пустой стек B.\n");
 }
 
-int push_A(stack_static_array_t *stack_sa, int x)
+int push_A(stack_static_array_t *stack_sa, double x)
 {
     if ((stack_sa->top_A + 1 == stack_sa->top_B) || (stack_sa->top_A == stack_sa->stack_size - 1) || (stack_sa->top_B == 0))
         return ERROR_STACK_A_OVERFLOW;
@@ -40,7 +40,7 @@ int push_A(stack_static_array_t *stack_sa, int x)
     return EXIT_SUCCESS;
 }
 
-int push_B(stack_static_array_t *stack_sa, int x)
+int push_B(stack_static_array_t *stack_sa, double x)
 {
     if ((stack_sa->top_A + 1 == stack_sa->top_B) || (stack_sa->top_A == stack_sa->stack_size - 1) || (stack_sa->top_B == 0))
         return ERROR_STACK_B_OVERFLOW;
@@ -49,7 +49,7 @@ int push_B(stack_static_array_t *stack_sa, int x)
     return EXIT_SUCCESS;
 }
 
-int pop_A(stack_static_array_t *stack_sa, int *poped_value)
+int pop_A(stack_static_array_t *stack_sa, double *poped_value)
 {
     if (stack_sa->top_A == -1)
         return ERROR_STACK_A_UNDERFLOW;
@@ -59,7 +59,7 @@ int pop_A(stack_static_array_t *stack_sa, int *poped_value)
     return EXIT_SUCCESS;
 }
 
-int pop_B(stack_static_array_t *stack_sa, int *poped_value)
+int pop_B(stack_static_array_t *stack_sa, double *poped_value)
 {
     if (stack_sa->top_B == stack_sa->stack_size)
         return ERROR_STACK_B_UNDERFLOW;
@@ -75,7 +75,7 @@ int stack_sa_output_A(stack_static_array_t *stack_sa)
     if (stack_sa->top_A == -1)
         return ERROR_EMPTY_STACK_A;
     for (int i = 0; i <= stack_sa->top_A; i++)
-        printf("%d ", stack_sa->stack[i]);
+        printf("%f ", stack_sa->stack[i]);
     printf("\n");
     return EXIT_SUCCESS;
 }
@@ -86,7 +86,7 @@ int stack_sa_output_B(stack_static_array_t *stack_sa)
     if (stack_sa->top_B == stack_sa->stack_size)
         return ERROR_EMPTY_STACK_B;
     for (int i = stack_sa->stack_size - 1; i >= stack_sa->top_B; i--)
-        printf("%d ", stack_sa->stack[i]);
+        printf("%f ", stack_sa->stack[i]);
     printf("\n");
     return EXIT_SUCCESS;
 }

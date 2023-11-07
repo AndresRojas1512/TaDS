@@ -1,6 +1,6 @@
 #include "stack_ll.h"
 
-struct ListNode *node_create(int x)
+struct ListNode *node_create(double x)
 {
     struct ListNode *Node = (struct ListNode *)malloc(sizeof(struct ListNode));
     if (!Node)
@@ -10,7 +10,7 @@ struct ListNode *node_create(int x)
     return Node;
 }
 
-int push(struct ListNode **top, int x)
+int push(struct ListNode **top, double x)
 {
     struct ListNode *Node = node_create(x);
     if (!Node)
@@ -20,7 +20,7 @@ int push(struct ListNode **top, int x)
     return EXIT_SUCCESS;
 }
 
-int pop(struct ListNode **top, int *poped_value, free_addresses_t *free_addresses)
+int pop(struct ListNode **top, double *poped_value, free_addresses_t *free_addresses)
 {
     if (!(*top))
         return ERROR_STACK_UNDERFLOW;
@@ -36,7 +36,7 @@ void stack_ll_print(struct ListNode *top)
     if (!top)
         return;
     stack_ll_print(top->next);
-    printf("%d-(%p) ", top->data, (void *)top);
+    printf("%f-(%p) ", top->data, (void *)top);
 }
 
 

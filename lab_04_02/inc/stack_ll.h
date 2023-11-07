@@ -13,7 +13,7 @@
 
 struct ListNode
 {
-    int data;
+    double data;
     struct ListNode *next;
 };
 
@@ -23,9 +23,9 @@ typedef struct free_addresses_t
     int count;
 } free_addresses_t;
 
-struct ListNode *node_create(int x);
-int push(struct ListNode **top, int x);
-int pop(struct ListNode **top, int *poped_value, free_addresses_t *free_addresses);
+struct ListNode *node_create(double x);
+int push(struct ListNode **top, double x);
+int pop(struct ListNode **top, double *poped_value, free_addresses_t *free_addresses);
 void stack_ll_print(struct ListNode *top);
 void free_addresses_init(free_addresses_t *free_addresses);
 void free_addresses_add(free_addresses_t *free_addresses, void *address);
