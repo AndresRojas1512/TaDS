@@ -229,7 +229,7 @@ void bytes_table_percentage(int *percentages, double *mem_percentage_sa, int num
 void memory_usage_analysis(struct ListNode node, int static_stack_size, int *percentages, int num_percentages, size_t *memory_usage_ll, size_t *memory_usage_sa)
 {
     size_t node_size = sizeof(struct ListNode);
-    *memory_usage_sa = static_stack_size * sizeof(int);
+    *memory_usage_sa = static_stack_size * sizeof(double);
     for (int i = 0; i < num_percentages; i++)
     {
         int num_elements = (static_stack_size * percentages[i]) / 100;

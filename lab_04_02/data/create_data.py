@@ -8,4 +8,4 @@ for count in counts:
     filename = f'{count}.txt'
     create_and_write_file(filename, count)
 
-print("Files created successfully.")
+print("Success.")

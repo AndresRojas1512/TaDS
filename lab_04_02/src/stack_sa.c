@@ -23,8 +23,8 @@ void stack_sa_output(stack_static_array_t *stack_sa)
     printf("\tИндекс Топ A: %d\n", stack_sa->top_A);
     printf("\tИндекс Топ B: %d\n", stack_sa->top_B);
     // printf("Размер стека: %d\n", stack_sa->stack_size);
-    printf("\tРазмер стека А: %d\n", stack_sa->cur_size_A);
-    printf("\tРазмер стека B: %d\n", stack_sa->cur_size_B);
+    // printf("\tРазмер стека А: %d\n", stack_sa->cur_size_A);
+    // printf("\tРазмер стека B: %d\n", stack_sa->cur_size_B);
     if (stack_sa_output_A(stack_sa))
         printf("Пустой стек А.\n");
     if (stack_sa_output_B(stack_sa))
@@ -71,7 +71,7 @@ int pop_B(stack_static_array_t *stack_sa, double *poped_value)
 
 int stack_sa_output_A(stack_static_array_t *stack_sa)
 {
-    printf("\tStack A: ");
+    printf("\tСтек A: ");
     if (stack_sa->top_A == -1)
         return ERROR_EMPTY_STACK_A;
     for (int i = 0; i <= stack_sa->top_A; i++)
@@ -82,7 +82,7 @@ int stack_sa_output_A(stack_static_array_t *stack_sa)
 
 int stack_sa_output_B(stack_static_array_t *stack_sa)
 {
-    printf("\tStack B: ");
+    printf("\tСтек B: ");
     if (stack_sa->top_B == stack_sa->stack_size)
         return ERROR_EMPTY_STACK_B;
     for (int i = stack_sa->stack_size - 1; i >= stack_sa->top_B; i--)
