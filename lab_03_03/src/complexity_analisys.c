@@ -12,8 +12,8 @@ int complexity_analisys(void)
 
     for (int i = 0; i < MATRIX_SIZES; i++)
     {
-        int size = matrix_sizes[i];
-        printf("Matrix size: [%d x %d]\n", size, size);
+        int general_size = matrix_sizes[i];
+        printf("Matrix general_size: [%d x %d]\n", general_size, general_size);
 
         // double std_time[PERCENTAGES_N];
         // double spmm_time[PERCENTAGES_N];
