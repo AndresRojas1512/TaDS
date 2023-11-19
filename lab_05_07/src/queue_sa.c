@@ -77,3 +77,12 @@ void queue_sa_print_general(queue_sa_t *queue_sa)
         }
     }
 }
+
+int queue_sa_validate_size(int *size)
+{
+    if (scanf("%d", size) != 1)
+        return ERROR_QUEUE_SA_SIZE_INPUT;
+    if (*size <= 0 || *size > QUEUE_SA_SIZE)
+        return ERROR_QUEUE_SA_SIZE_RANGE;
+    return EXIT_SUCCESS;
+}

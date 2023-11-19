@@ -3,9 +3,9 @@
 void menu(void)
 {
     printf("\n");
-    puts("1. Initialize Queue Size");
-    puts("2. Enqueue.");
-    puts("3. Dequeue.");
+    puts("1. su simulation queue_sa");
+    puts("2. su simulation queue_ll");
+    puts("3. complexity analysis");
     puts("0. Exit.");
 }
 
@@ -17,7 +17,7 @@ int input_choice(int *choice)
     clean_buffer();
     if (!result)
         return ERROR_CHOICE_READ_UB;
-    if (*choice > 3 || *choice < 0)
+    if (*choice > 4 || *choice < 0)
         return ERROR_CHOICE_READ_RANGE;
     return EXIT_SUCCESS;
 }

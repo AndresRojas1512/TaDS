@@ -4,47 +4,66 @@
 #include "queue_sa.h"
 #include "queue_ll.h"
 #include "system_func.h"
+#include "ui.h"
 
 int main(void)
 {
     int exit_code = EXIT_SUCCESS;
-    queue_sa_t queue_sa;
-    request_t request_01 = {.passes = 1, .processing_time = 1.1};
-    request_t request_02 = {.passes = 2, .processing_time = 2.2};
-    request_t request_03 = {.passes = 3, .processing_time = 3.3};
-    request_t request_04 = {.passes = 4, .processing_time = 4.4};
-    struct ListNode *front = NULL;
-    struct ListNode *rear = NULL;
-    request_t dequeued_val;
 
-    // STATIC QUEUE TEST
-    // queue_sa_init(&queue_sa, 3);
-    // if (enqueue_sa(&queue_sa, request_01))
-    //     return EXIT_FAILURE;
-    // if (enqueue_sa(&queue_sa, request_02))
-    //     return EXIT_FAILURE;
-    // if (dequeue_sa(&queue_sa, &dequeued_val))
-    //     return EXIT_FAILURE;
-    // else
-    //     request_print(&dequeued_val);
-    // if (enqueue_sa(&queue_sa, request_03))
-    //     return EXIT_FAILURE;
-    // if (enqueue_sa(&queue_sa, request_04))
-    //     return EXIT_FAILURE;
-    // queue_sa_print_general(&queue_sa);
+    queue_sa_t queue_sa; // queue_sa
+    int queue_sa_size;
+    struct ListNode *front = NULL; // queue_ll
+    struct ListNode *rear = NULL; // queue_ll
 
-    // LL QUEUE TEST
-    if (enqueue_ll(&front, &rear, &request_01))
-        return EXIT_FAILURE;
-    if (enqueue_ll(&front, &rear, &request_02))
-        return EXIT_FAILURE;
-    if (dequeue_ll(&front, &rear, &dequeued_val))
-        return EXIT_FAILURE;
-    else
+    system_time_t time_in_range;
+    system_time_t time_out_range;
+    int request_passes;
+
+    int choice;
+
+    do
     {
-        printf("Dequeued Val: ");
-        request_print(&dequeued_val);
+        menu();
+        if (input_choice(&choice))
+            puts("\nОшибка: Введите опцию (0 - 4).\n");
+        else
+        {
+            switch (choice)
+            {
+            case 1:
+                printf("queue size: ");
+                exit_code = queue_sa_validate_size(&queue_sa_size);
+                if (exit_code)
+                    return exit_code;
+                printf("time in queue: ");
+                exit_code = time_range_validate(&time_in_range, SYSTEM_TIME_LLIM, SYSTEM_TIME_RLIM);
+                if (exit_code)
+                    return exit_code;
+                
+                printf("time out su: ");
+                exit_code = time_range_validate(&time_out_range, SYSTEM_TIME_LLIM, SYSTEM_TIME_RLIM);
+                if (exit_code)
+                    return exit_code;
+                
+                printf("request passes: ");
+                exit_code = request_validate_passes(&request_passes);
+                if (exit_code)
+                    return exit_code;
+                
+                queue_sa_init(&queue_sa, queue_sa_size);
+                queue_sa_system(&queue_sa, &time_in_range, &time_out_range, request_passes);
+                break;
+            case 2:
+                puts("Two");
+                break;
+            
+            case 3:
+                puts("Three");
+                break;
+            }
+        }
     }
-    queue_ll_print(front);
+    while (choice != 0);
+
     return exit_code;
 }

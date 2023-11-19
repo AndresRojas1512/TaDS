@@ -86,6 +86,11 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
     statistic_total_print(time_machine_work, time_expected, error_margin, requests_in, requests_out, requests_failed, requests_calls, time_machine_idle);
 }
 
+void queue_ll_system(struct ListNode **front, struct ListNode **rear, system_time_t *time_in_range, system_time_t *time_out_range, int process_count)
+{
+    return;
+}
+
 double time_generate(system_time_t *system_time)
 {
     double t = (double)rand() / RAND_MAX;
@@ -109,4 +114,16 @@ void statistic_total_print(double time_machine_work, double time_expected, doubl
     printf("Failed Requests: %d\n", requests_failed);
     printf("Machine Calls: %d\n", requests_calls);
     printf("Time Machine Idle: %f\n", time_machine_idle);
+}
+
+int time_range_validate(system_time_t *system_time, double llimit, double rlimit)
+{
+    double t1_buf, t2_buf;
+    if (scanf("%lf %lf", &t1_buf, &t2_buf) != 2)
+        return ERROR_SYSTEM_TIME_INPUT;
+    if (t1_buf < llimit || t2_buf > rlimit || t2_buf < t1_buf)
+        return ERROR_SYSTEM_TIME_RANGE;
+    system_time->t1 = t1_buf;
+    system_time->t2 = t2_buf;
+    return EXIT_SUCCESS;
 }
