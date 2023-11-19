@@ -86,9 +86,112 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
     statistic_total_print(time_machine_work, time_expected, error_margin, requests_in, requests_out, requests_failed, requests_calls, time_machine_idle);
 }
 
-void queue_ll_system(struct ListNode **front, struct ListNode **rear, system_time_t *time_in_range, system_time_t *time_out_range, int process_count)
+// QUEUE_LL_SYSTEM
+void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, system_time_t *time_in_range, system_time_t *time_out_range, int process_count) // done : needs testing
 {
-    return;
+    int requests_in = 0;
+    int requests_out = 0;
+    int requests_failed = 0;
+    int requests_calls = 0;
+
+    double time_machine_work = 0;
+    double time_machine_idle = 0;
+
+    double time_in = time_generate(time_in_range);
+    double time_out = -1;
+    
+    int len_general = 0;
+
+    int mem_reused = 0;
+    int mem_new = 0;
+    int mem_flag = 0;
+
+    request_t request_cur; // current request
+
+    while (requests_out <= 1000)
+    {
+        if (time_out < 0 || time_in < time_out)
+        {
+            if (time_out < 0)
+                time_machine_idle += time_in;
+            time_machine_work += time_in;
+            time_out -= time_in;
+            time_in = time_generate(time_in_range);
+            request_t request = {.passes = 0, .processing_time = time_generate(time_out_range)};
+            if (enqueue_ll(queue_ll, &request))
+            {
+                printf("Error Node Allocation\n");
+                requests_failed++;
+            }
+            else
+            {
+                mem_flag = memory_check(queue_ll, free_addresses);
+                if (mem_flag)
+                    mem_reused++;
+                else
+                    mem_new++;
+                requests_in++;
+            }
+            if (time_out < 0 && !queue_ll_isempty(queue_ll))
+            {
+                if (dequeue_ll(queue_ll, &request_cur))
+                    printf("Dequeue error\n");
+                else
+                    time_out = request_cur.processing_time;
+            }
+        }
+        else
+        {
+            time_in -= time_out;
+            time_machine_work += time_out;
+            time_out = 0;
+
+            request_cur.passes++;
+            requests_calls++;
+
+            if (request_cur.passes < process_count)
+            {
+                request_cur.processing_time = time_generate(time_out_range);
+                if (enqueue_ll(queue_ll, &request_cur))
+                {
+                    printf("Enqueue Error\n");
+                    requests_failed++;
+                }
+                else
+                {
+                    mem_flag = memory_check(queue_ll, free_addresses);
+                    if (mem_flag)
+                        mem_reused++;
+                    else
+                        mem_new++;
+                }
+            }
+            else
+            {
+                len_general += queue_ll->len;
+                requests_out++;
+                if (requests_out % 100 == 0)
+                    statistic_partial_print(requests_out, queue_ll->len, len_general / requests_out);
+            }
+            if (queue_ll_isempty(queue_ll))
+                time_out = -1;
+            else
+            {
+                if (dequeue_ll(queue_ll, &request_cur))
+                    printf("Dequeue Error\n");
+                time_out = request_cur.processing_time;
+            }
+        }
+    }
+    double time_expected;
+    if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * process_count * 1000)
+        time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * 1000;
+    else
+        time_expected = requests_calls * (time_out_range->t1 + time_out_range->t2) / 2;
+    double error_margin = fabs(time_machine_work - time_expected) / time_expected * 100;
+    statistic_total_print(time_machine_work, time_expected, error_margin, requests_in, requests_out, requests_failed, requests_calls, time_machine_idle);
+    printf("Reused mem: %d\n", mem_reused);
+    printf("New mem: %d\n", mem_new);
 }
 
 double time_generate(system_time_t *system_time)

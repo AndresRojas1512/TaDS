@@ -22,6 +22,7 @@ typedef struct system_time_t
 } system_time_t;
 
 void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_time_t *time_out_range, int process_count);
+void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, system_time_t *time_in_range, system_time_t *time_out_range, int process_count);
 double time_generate(system_time_t *system_time);
 void statistic_partial_print(int requests_out, int queue_len, int median_len);
 void statistic_total_print(double time_machine_work, double time_expected, double error_margin, int requests_in, int requests_out, int requests_failed, int requests_calls, double time_machine_idle);
