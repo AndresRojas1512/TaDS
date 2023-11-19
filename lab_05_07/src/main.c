@@ -75,7 +75,7 @@ int main(void)
                 queue_ll_system(&queue_ll, &free_addresses, &time_in_range, &time_out_range, request_passes);
                 break;
             case 3:
-                puts("Three");
+                puts("Complexity Analysis");
                 break;
             }
         }

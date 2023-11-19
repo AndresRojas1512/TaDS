@@ -1,11 +1,11 @@
 #include "queue_sa.h"
 
-void queue_sa_init(queue_sa_t *queue_sa, int general_size)
+void queue_sa_init(queue_sa_t *queue_sa, int capacity)
 {
     queue_sa->front = -1;
     queue_sa->rear = -1;
-    queue_sa->count_passed_requests = 0;
-    queue_sa->general_size = general_size;
+    queue_sa->size = 0;
+    queue_sa->capacity = capacity;
 }
 
 int queue_sa_isempty(queue_sa_t *queue_sa)
@@ -17,7 +17,7 @@ int queue_sa_isempty(queue_sa_t *queue_sa)
 
 int queue_sa_isfull(queue_sa_t *queue_sa)
 {
-    if (((queue_sa->rear + 1) % queue_sa->general_size) == queue_sa->front)
+    if (((queue_sa->rear + 1) % queue_sa->capacity) == queue_sa->front)
         return IS_FULL;
     return IS_NOT_FULL;
 }
@@ -32,9 +32,9 @@ int enqueue_sa(queue_sa_t *queue_sa, request_t x)
         queue_sa->rear = 0;
     }
     else
-        queue_sa->rear = (queue_sa->rear + 1) % queue_sa->general_size;
+        queue_sa->rear = (queue_sa->rear + 1) % queue_sa->capacity;
     queue_sa->requests[queue_sa->rear] = x;
-    queue_sa->count_passed_requests += 1;
+    queue_sa->size += 1;
     return EXIT_SUCCESS;
 }
 
@@ -51,15 +51,16 @@ int dequeue_sa(queue_sa_t *queue_sa, request_t *dequeued_val)
     else
     {
         *dequeued_val = queue_sa->requests[queue_sa->front];
-        queue_sa->front = (queue_sa->front + 1) % queue_sa->general_size;
+        queue_sa->front = (queue_sa->front + 1) % queue_sa->capacity;
     }
+    queue_sa->size -= 1;
     return EXIT_SUCCESS;
 }
 
 void queue_sa_print_general(queue_sa_t *queue_sa)
 {
-    printf("Gen Size: %d\n", queue_sa->general_size);
-    printf("Passed Requests: %d\n", queue_sa->count_passed_requests);
+    printf("Capacity: %d\n", queue_sa->capacity);
+    printf("Passed Requests: %d\n", queue_sa->size);
     printf("Front: %d\n", queue_sa->front);
     printf("Rear: %d\n", queue_sa->rear);
     printf("Queue: \n");
@@ -73,7 +74,7 @@ void queue_sa_print_general(queue_sa_t *queue_sa)
             request_print(&(queue_sa->requests[index]));
             if (index == queue_sa->rear)
                 break;
-            index = (index + 1) % queue_sa->general_size;
+            index = (index + 1) % queue_sa->capacity;
         }
     }
 }

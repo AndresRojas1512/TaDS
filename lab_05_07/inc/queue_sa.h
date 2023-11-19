@@ -22,11 +22,11 @@ typedef struct queue_sa_t
     request_t requests[QUEUE_SA_SIZE];
     int front;
     int rear;
-    int general_size;
-    int count_passed_requests;
+    int capacity;
+    int size;
 } queue_sa_t;
 
-void queue_sa_init(queue_sa_t *queue_sa, int general_size);
+void queue_sa_init(queue_sa_t *queue_sa, int capacity);
 int queue_sa_isempty(queue_sa_t *queue_sa);
 int queue_sa_isfull(queue_sa_t *queue_sa);
 int enqueue_sa(queue_sa_t *queue_sa, request_t x);

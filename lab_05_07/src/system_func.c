@@ -1,6 +1,6 @@
 #include "system_func.h"
 
-void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_time_t *time_out_range, int process_count)
+void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_time_t *time_out_range, int request_repeat_times) // DONE!
 {
     // counters
     int requests_in = 0; // amount on enqueued requests
@@ -17,9 +17,13 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
 
     int len_general = 0;
 
-    request_t request_cur; // current request
+    printf("Queue Status Before Process:\n");
+    queue_sa_print_general(queue_sa);
 
-    while (requests_out <= PROCESSED_REQUESTS)
+    request_t request_cur; // current request
+    request_init(&request_cur);
+
+    while (requests_out != PROCESSED_REQUESTS)
     {
         if (time_out < 0 || time_in < time_out)
         {
@@ -33,7 +37,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
                 printf("Queue Overflow!\n");
             else
                 requests_in++;
-            if (time_out < 0 && queue_sa->count_passed_requests)
+            if (time_out < 0 && queue_sa->size)
             {
                 if (dequeue_sa(queue_sa, &request_cur))
                     printf("Dequeue Error\n");
@@ -50,7 +54,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
             request_cur.passes++;
             requests_calls++;
             
-            if (request_cur.passes < process_count)
+            if (request_cur.passes < request_repeat_times)
             {
                 request_cur.processing_time = time_generate(time_out_range);
                 if (enqueue_sa(queue_sa, request_cur))
@@ -61,10 +65,10 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
             }
             else
             {
-                len_general += queue_sa->count_passed_requests;
+                len_general += queue_sa->size;
                 requests_out++;
                 if (requests_out % 100 == 0)
-                    statistic_partial_print(requests_out, queue_sa->count_passed_requests, len_general / requests_out);
+                    statistic_partial_print(requests_out, queue_sa->size, len_general / requests_out);
             }
             if (queue_sa_isempty(queue_sa))
                 time_out -= 1;
@@ -77,7 +81,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
         }
     }
     double time_expected;
-    if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * process_count * 1000)
+    if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * 1000)
         time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * 1000;
     else
         time_expected = requests_calls * (time_out_range->t1 + time_out_range->t2) / 2;
@@ -87,7 +91,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
 }
 
 // QUEUE_LL_SYSTEM
-void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, system_time_t *time_in_range, system_time_t *time_out_range, int process_count) // done : needs testing
+void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, system_time_t *time_in_range, system_time_t *time_out_range, int request_repeat_times) // DONE!
 {
     int requests_in = 0;
     int requests_out = 0;
@@ -108,7 +112,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
 
     request_t request_cur; // current request
 
-    while (requests_out <= 1000)
+    while (requests_out != 1000)
     {
         if (time_out < 0 || time_in < time_out)
         {
@@ -149,7 +153,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
             request_cur.passes++;
             requests_calls++;
 
-            if (request_cur.passes < process_count)
+            if (request_cur.passes < request_repeat_times)
             {
                 request_cur.processing_time = time_generate(time_out_range);
                 if (enqueue_ll(queue_ll, &request_cur))
@@ -184,7 +188,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
         }
     }
     double time_expected;
-    if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * process_count * 1000)
+    if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * 1000)
         time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * 1000;
     else
         time_expected = requests_calls * (time_out_range->t1 + time_out_range->t2) / 2;
