@@ -121,11 +121,13 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
     int mem_new = 0;
     int mem_flag = 0;
 
+    free_addresses_init(free_addresses);
+
     request_t request_cur; // current request
 
     unsigned long long time_start = microseconds_now();
     
-    while (requests_out != 1000)
+    while (requests_out != PROCESSED_REQUESTS)
     {
         if (time_out < 0 || time_in < time_out)
         {
@@ -151,7 +153,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
             }
             if (time_out < 0 && !queue_ll_isempty(queue_ll))
             {
-                if (dequeue_ll(queue_ll, &request_cur))
+                if (dequeue_ll(queue_ll, &request_cur, free_addresses))
                     printf("Dequeue error\n");
                 else
                     time_out = request_cur.processing_time;
@@ -194,7 +196,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
                 time_out = -1;
             else
             {
-                if (dequeue_ll(queue_ll, &request_cur))
+                if (dequeue_ll(queue_ll, &request_cur, free_addresses))
                     printf("Dequeue Error\n");
                 time_out = request_cur.processing_time;
             }

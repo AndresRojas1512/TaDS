@@ -33,7 +33,7 @@ void queue_ll_init(queue_ll_t *queue_ll);
 void free_addresses_init(free_addresses_t *free_addresses);
 int enqueue_ll(queue_ll_t *queue_ll, request_t *request);
 int queue_ll_isempty(queue_ll_t *queue_ll);
-int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val);
+int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val, free_addresses_t *free_addresses);
 struct ListNode *node_create(request_t request);
 void node_free(struct ListNode *node);
 int queue_ll_print(queue_ll_t *queue_ll);

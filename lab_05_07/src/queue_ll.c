@@ -44,7 +44,7 @@ int queue_ll_isempty(queue_ll_t *queue_ll) // done
     return 0;
 }
 
-int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val) // done
+int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val, free_addresses_t *free_addresses) // todo : add freed memory to array
 {
     if (!queue_ll)
         return EXIT_FAILURE;
@@ -64,6 +64,8 @@ int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val) // done
         queue_ll->front = queue_ll->front->next;
         queue_ll->len -= 1;
     }
+    free_addresses->addresses[free_addresses->count] = tmp;
+    free_addresses->count++;
     node_free(tmp);
     return EXIT_SUCCESS;
 }
@@ -117,4 +119,9 @@ int memory_check(queue_ll_t *queue_ll, free_addresses_t *free_addresses) // done
     if (found)
         free_addresses->count--;
     return found;
+}
+
+void free_addresses_count_equal(free_addresses_t *free_addresses, int *count)
+{
+    return;
 }

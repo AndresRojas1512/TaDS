@@ -5,6 +5,8 @@ int complexity_analysis(void)
 {
     int exit_code = EXIT_SUCCESS;
     request_t dequeued_value;
+    free_addresses_t free_addresses;
+    free_addresses_init(&free_addresses);
 
     queue_sa_t queue_sa;
     queue_ll_t queue_ll;
@@ -81,10 +83,11 @@ int complexity_analysis(void)
                 unsigned long long beg_cleanup_ll = microseconds_now();
                 while (!queue_ll_isempty(&queue_ll))
                 {
-                    exit_code = dequeue_ll(&queue_ll, &dequeued_value);
+                    exit_code = dequeue_ll(&queue_ll, &dequeued_value, &free_addresses);
                     if (exit_code)
                         printf("queue_ll dequeue error\n");
                 }
+                free_addresses.count = 0;
                 unsigned long long end_cleanup_ll = microseconds_now();
                 cleanup_total_time_ll += end_cleanup_ll - beg_cleanup_ll;
             }
