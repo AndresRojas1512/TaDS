@@ -1,3 +1,4 @@
+#define _POSIX_C_SOURCE 199309L
 #include "system_func.h"
 
 void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_time_t *time_out_range, int request_repeat_times) // DONE!
@@ -22,6 +23,8 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
 
     request_t request_cur; // current request
     request_init(&request_cur);
+    
+    unsigned long long time_start = microseconds_now(); // time start
 
     while (requests_out != PROCESSED_REQUESTS)
     {
@@ -34,7 +37,10 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
             time_in = time_generate(time_in_range);
             request_t request = {.passes = 0, .processing_time = (time_generate(time_out_range))};
             if (enqueue_sa(queue_sa, request))
-                printf("Queue Overflow!\n");
+            {
+                requests_failed++;
+                // printf("Queue Overflow!\n");
+            }
             else
                 requests_in++;
             if (time_out < 0 && queue_sa->size)
@@ -59,7 +65,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
                 request_cur.processing_time = time_generate(time_out_range);
                 if (enqueue_sa(queue_sa, request_cur))
                 {
-                    printf("Enqueue Error\n");
+                    // printf("Enqueue Error\n");
                     requests_failed++;
                 }
             }
@@ -80,6 +86,11 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
             }
         }
     }
+
+    unsigned long long time_end = microseconds_now();
+    unsigned long long time_system_elapsed = time_end - time_start;
+    printf("\tSystem Time: %lld\n", time_system_elapsed);
+
     double time_expected;
     if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * 1000)
         time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * 1000;
@@ -112,6 +123,8 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
 
     request_t request_cur; // current request
 
+    unsigned long long time_start = microseconds_now();
+    
     while (requests_out != 1000)
     {
         if (time_out < 0 || time_in < time_out)
@@ -124,7 +137,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
             request_t request = {.passes = 0, .processing_time = time_generate(time_out_range)};
             if (enqueue_ll(queue_ll, &request))
             {
-                printf("Error Node Allocation\n");
+                // printf("Error Node Allocation\n");
                 requests_failed++;
             }
             else
@@ -158,7 +171,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
                 request_cur.processing_time = time_generate(time_out_range);
                 if (enqueue_ll(queue_ll, &request_cur))
                 {
-                    printf("Enqueue Error\n");
+                    // printf("Enqueue Error\n");
                     requests_failed++;
                 }
                 else
@@ -187,6 +200,11 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
             }
         }
     }
+
+    unsigned long long time_end = microseconds_now();
+    unsigned long long time_system_elapsed = time_end - time_start;
+    printf("\tSystem Time: %lld\n", time_system_elapsed);
+
     double time_expected;
     if ((time_in_range->t1 + time_in_range->t2) / 2 * 1000 > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * 1000)
         time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * 1000;
@@ -233,4 +251,15 @@ int time_range_validate(system_time_t *system_time, double llimit, double rlimit
     system_time->t1 = t1_buf;
     system_time->t2 = t2_buf;
     return EXIT_SUCCESS;
+}
+
+unsigned long long microseconds_now(void)
+{
+    struct timespec ts;
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) == -1)
+    {
+        perror("clock_getttime");
+        return (unsigned long long) -1;
+    }
+    return (unsigned long long)ts.tv_sec * 1000000ULL + (unsigned long long)ts.tv_nsec / 1000;
 }

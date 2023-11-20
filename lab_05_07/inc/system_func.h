@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
+#include <sys/time.h>
 #include "request.h"
 #include "queue_sa.h"
 #include "queue_ll.h"
@@ -27,5 +29,6 @@ double time_generate(system_time_t *system_time);
 void statistic_partial_print(int requests_out, int queue_len, int median_len);
 void statistic_total_print(double time_machine_work, double time_expected, double error_margin, int requests_in, int requests_out, int requests_failed, int requests_calls, double time_machine_idle);
 int time_range_validate(system_time_t *system_time, double llimit, double rlimit);
+unsigned long long microseconds_now(void);
 
 #endif

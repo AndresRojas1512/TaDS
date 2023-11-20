@@ -4,6 +4,7 @@
 #include "queue_sa.h"
 #include "queue_ll.h"
 #include "system_func.h"
+#include "complexity_analysis.h"
 #include "ui.h"
 
 int main(void)
@@ -75,7 +76,7 @@ int main(void)
                 queue_ll_system(&queue_ll, &free_addresses, &time_in_range, &time_out_range, request_passes);
                 break;
             case 3:
-                puts("Complexity Analysis");
+                exit_code = complexity_analysis();
                 break;
             }
         }

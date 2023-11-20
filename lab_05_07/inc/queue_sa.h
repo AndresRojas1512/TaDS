@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "request.h"
 
-#define QUEUE_SA_SIZE 1000
+#define QUEUE_SA_SIZE 100000
 
 #define IS_EMPTY 1
 #define IS_NOT_EMPTY 0
