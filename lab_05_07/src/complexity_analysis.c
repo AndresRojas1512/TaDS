@@ -8,8 +8,15 @@ int complexity_analysis(void)
     free_addresses_t free_addresses;
     free_addresses_init(&free_addresses);
 
+    // debug
+    free_addresses_t free_addresses_dequeue;
+    free_addresses_init(&free_addresses_dequeue);
+    // enddebug
+
     queue_sa_t queue_sa;
     queue_ll_t queue_ll;
+
+    queue_ll_init(&queue_ll);
 
     int files[N_FILES] = {1000, 10000, 20000, 30000, 40000, 50000, 60000, 70000, 80000, 90000, 100000};
     request_t data_array[DATA_ARRAY_SIZE];
@@ -53,7 +60,7 @@ int complexity_analysis(void)
                 {
                     exit_code = enqueue_sa(&queue_sa, data_array[j]);
                     if (exit_code)
-                        printf("error enqueue sa\n");
+                        printf("Error: Enqueue Static\n");
                 }
                 unsigned long long end_fill_sa = microseconds_now();
                 fill_total_time_sa += end_fill_sa - beg_fill_sa;
@@ -63,7 +70,7 @@ int complexity_analysis(void)
                 while (!queue_sa_isempty(&queue_sa))
                 {
                     if (dequeue_sa(&queue_sa, &dequeued_value))
-                        printf("error dequeue sa\n");
+                        printf("Error: Dequeue Static\n");
                 }
                 unsigned long long end_cleanup_sa = microseconds_now();
                 cleanup_total_time_sa+= end_cleanup_sa - beg_cleanup_sa;
@@ -72,9 +79,9 @@ int complexity_analysis(void)
                 unsigned long long beg_fill_ll = microseconds_now();
                 for (int j = 0; j < files[i] & !exit_code; j++)
                 {
-                    exit_code = enqueue_ll(&queue_ll, &data_array[j]);
+                    exit_code = enqueue_ll_ca(&queue_ll, &data_array[j]);
                     if (exit_code)
-                        printf("error enqueue ll\n");
+                        printf("Error: Enqueue List\n");
                 }
                 unsigned long long end_fill_ll = microseconds_now();
                 fill_total_time_ll += end_fill_ll - beg_fill_ll;
@@ -83,9 +90,9 @@ int complexity_analysis(void)
                 unsigned long long beg_cleanup_ll = microseconds_now();
                 while (!queue_ll_isempty(&queue_ll))
                 {
-                    exit_code = dequeue_ll(&queue_ll, &dequeued_value, &free_addresses);
+                    exit_code = dequeue_ll_ca(&queue_ll, &dequeued_value);
                     if (exit_code)
-                        printf("queue_ll dequeue error\n");
+                        printf("Error: Dequeue List\n");
                 }
                 free_addresses.count = 0;
                 unsigned long long end_cleanup_ll = microseconds_now();
@@ -116,6 +123,7 @@ int data_array_import(char *filepath, request_t *data_array, int n_elements)
             return EXIT_FAILURE;
         data_array[i] = request_buffer;
     }
+    fclose(file);
     return EXIT_SUCCESS;
 }
 
@@ -140,28 +148,28 @@ void array_init_zeros(unsigned long long *array, int n)
 void microseconds_table(unsigned long long *data_time_queue_sa_fill, unsigned long long *data_time_queue_ll_fill, unsigned long long *data_time_queue_sa_cleanup, unsigned long long *data_time_queue_ll_cleanup, int *elements, int rows)
 {
     puts("Время, us:");
-    printf("_____________________________________________________________________________________________________________\n");
-    printf("| N elements | Enqueue (Статика), us | Enqueue (Список), us || Dequeue (Статика), us | Dequeue (Список), us |\n");
-    printf("|___________________________________________________________________________________________________________|\n");
+    printf("_____________________________________________________________________________________________________________________\n");
+    printf("| N elements | Добавление (Статика), us | Добавление (Список), us || Удаление (Статика), us | Удаление (Список), us |\n");
+    printf("|___________________________________________________________________________________________________________________|\n");
     for (int i = 0; i < rows; i++)
-        printf("| %10d | %21lld | %20lld || %21lld | %20lld |\n", elements[i], data_time_queue_sa_fill[i], data_time_queue_ll_fill[i], data_time_queue_sa_cleanup[i], data_time_queue_ll_cleanup[i]);
-    printf("|___________________________________________________________________________________________________________|\n");
+        printf("| %10d | %24lld | %23lld || %22lld | %21lld |\n", elements[i], data_time_queue_sa_fill[i], data_time_queue_ll_fill[i], data_time_queue_sa_cleanup[i], data_time_queue_ll_cleanup[i]);
+    printf("|___________________________________________________________________________________________________________________|\n");
 }
 
 void bytes_table(int *percentages, size_t *memory_usage_ll, size_t memory_usage_sa, int num_percentages)
 {
-    printf("____________________________________________________________\n");
-    printf("| Процент | Queue (Статика), bytes | Queue (Список), bytes |\n");
-    printf("|__________________________________________________________|\n");
+    printf("________________________________________________________________\n");
+    printf("| Процент | Очередь (Статика), bytes | Очередь (Список), bytes |\n");
+    printf("|______________________________________________________________|\n");
     for (int i = 0; i < num_percentages; i++)
-        printf("| %7d | %22zu | %21zu |\n", percentages[i], memory_usage_sa, memory_usage_ll[i]);
-    printf("|__________________________________________________________|\n");
+        printf("| %7d | %24zu | %23zu |\n", percentages[i], memory_usage_sa, memory_usage_ll[i]);
+    printf("|______________________________________________________________|\n");
 }
 
 void memory_usage_analysis(queue_ll_t *queue_ll, queue_sa_t *queue_sa, int *percentages, int num_percentages, size_t *memory_usage_sa, size_t *memory_usage_ll)
 {
     size_t node_size = sizeof(struct ListNode);
-    printf("node size: %zu\n", node_size);
+    // printf("node size: %zu\n", node_size);
     *memory_usage_sa = queue_sa->capacity * sizeof(request_t);
     for (int i = 0; i < num_percentages; i++)
     {
@@ -170,3 +178,51 @@ void memory_usage_analysis(queue_ll_t *queue_ll, queue_sa_t *queue_sa, int *perc
         memory_usage_ll[i] = bytes_ll;
     }
 }
+
+int enqueue_ll_ca(queue_ll_t *queue_ll, request_t *request)
+{
+    if (!queue_ll || !request)
+        return EXIT_FAILURE;
+
+    struct ListNode *tmp = node_create(*request);
+    if (!tmp)
+        return ERROR_NODE_ALLOCATION;
+
+    if ((queue_ll->front) == NULL && (queue_ll->rear) == NULL)
+    {
+        (queue_ll->front) = (queue_ll->rear) = tmp;
+        queue_ll->len += 1;
+    }
+    else
+    {
+        queue_ll->rear->next = tmp;
+        queue_ll->rear = tmp;
+        queue_ll->len += 1;
+    }
+    return EXIT_SUCCESS;
+}
+
+int dequeue_ll_ca(queue_ll_t *queue_ll, request_t *dequeued_val)
+{
+    if (!queue_ll)
+        return EXIT_FAILURE;
+    struct ListNode *tmp = queue_ll->front;
+    if (queue_ll->front == NULL)
+        return ERROR_EMPTY_QUEUE;
+    if (queue_ll->front == queue_ll->rear)
+    {
+        *dequeued_val = queue_ll->front->request;
+        queue_ll->front = NULL;
+        queue_ll->rear = NULL;
+        queue_ll->len -= 1;
+    }
+    else
+    {
+        *dequeued_val = queue_ll->front->request;
+        queue_ll->front = queue_ll->front->next;
+        queue_ll->len -= 1;
+    }
+    node_free(tmp);
+    return EXIT_SUCCESS;
+}
+

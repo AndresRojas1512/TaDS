@@ -31,12 +31,16 @@ typedef struct free_addresses_t
 
 void queue_ll_init(queue_ll_t *queue_ll);
 void free_addresses_init(free_addresses_t *free_addresses);
-int enqueue_ll(queue_ll_t *queue_ll, request_t *request);
+int enqueue_ll(queue_ll_t *queue_ll, request_t *request, free_addresses_t *free_addresses);
 int queue_ll_isempty(queue_ll_t *queue_ll);
 int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val, free_addresses_t *free_addresses);
 struct ListNode *node_create(request_t request);
 void node_free(struct ListNode *node);
 int queue_ll_print(queue_ll_t *queue_ll);
 int memory_check(queue_ll_t *queue_ll, free_addresses_t *free_addresses);
+void free_addresses_print(free_addresses_t *free_addresses);
+int free_addresses_compare(free_addresses_t *free_addresses_enqueue, free_addresses_t *free_addresses_dequeue);
+void *free_addresses_remove_dup(free_addresses_t *free_addresses, int *free_addresses_single_count);
+void queue_ll_free(queue_ll_t *queue_ll);
 
 #endif

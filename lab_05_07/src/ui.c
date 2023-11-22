@@ -3,10 +3,10 @@
 void menu(void)
 {
     printf("\n");
-    puts("1. su simulation queue_sa");
-    puts("2. su simulation queue_ll");
-    puts("3. complexity analysis");
-    puts("0. Exit.");
+    puts("1. Процесс обслуживания статическим массивом");
+    puts("2. Процесс обслуживания списком");
+    puts("3. Анализ эффективности");
+    puts("0. Выход\n");
 }
 
 int input_choice(int *choice)
@@ -17,7 +17,7 @@ int input_choice(int *choice)
     clean_buffer();
     if (!result)
         return ERROR_CHOICE_READ_UB;
-    if (*choice > 4 || *choice < 0)
+    if (*choice > 3 || *choice < 0)
         return ERROR_CHOICE_READ_RANGE;
     return EXIT_SUCCESS;
 }

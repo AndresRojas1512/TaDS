@@ -13,7 +13,7 @@
 
 #define N_FILES 11
 #define NUM_PERCENTAGES 12
-#define NUM_TRIALS 100
+#define NUM_TRIALS 500
 #define FILEPATH_LEN 25
 #define DATA_ARRAY_SIZE 100000
 
@@ -26,4 +26,6 @@ void microseconds_table(unsigned long long *data_time_queue_sa_fill, unsigned lo
 void bytes_table(int *percentages, size_t *memory_usage_ll, size_t memory_usage_sa, int num_percentages);
 void memory_usage_analysis(queue_ll_t *queue_ll, queue_sa_t *queue_sa, int *percentages, int num_percentages, size_t *memory_usage_sa, size_t *memory_usage_ll);
 
+int enqueue_ll_ca(queue_ll_t *queue_ll, request_t *request);
+int dequeue_ll_ca(queue_ll_t *queue_ll, request_t *dequeued_val);
 #endif

@@ -13,7 +13,7 @@
 #define ERROR_SYSTEM_TIME_INPUT 20
 #define ERROR_SYSTEM_TIME_RANGE 21
 
-#define PROCESSED_REQUESTS 10
+#define PROCESSED_REQUESTS 1000
 #define SYSTEM_TIME_LLIM 0
 #define SYSTEM_TIME_RLIM 10000
 
@@ -30,5 +30,6 @@ void statistic_partial_print(int requests_out, int queue_len, int median_len);
 void statistic_total_print(double time_machine_work, double time_expected, double error_margin, int requests_in, int requests_out, int requests_failed, int requests_calls, double time_machine_idle);
 int time_range_validate(system_time_t *system_time, double llimit, double rlimit);
 unsigned long long microseconds_now(void);
+int addresses_file_output(void **addresses, int addresses_count);
 
 #endif

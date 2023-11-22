@@ -12,7 +12,7 @@ void free_addresses_init(free_addresses_t *free_addresses)
     free_addresses->count = 0;
 }
 
-int enqueue_ll(queue_ll_t *queue_ll, request_t *request) // done
+int enqueue_ll(queue_ll_t *queue_ll, request_t *request, free_addresses_t *free_addresses) // todo: add all memory addresses
 {
     if (!queue_ll || !request)
         return EXIT_FAILURE;
@@ -32,6 +32,8 @@ int enqueue_ll(queue_ll_t *queue_ll, request_t *request) // done
         queue_ll->rear = tmp;
         queue_ll->len += 1;
     }
+    free_addresses->addresses[free_addresses->count] = queue_ll->rear;
+    free_addresses->count++;
     return EXIT_SUCCESS;
 }
 
@@ -44,7 +46,7 @@ int queue_ll_isempty(queue_ll_t *queue_ll) // done
     return 0;
 }
 
-int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val, free_addresses_t *free_addresses) // todo : add freed memory to array
+int dequeue_ll(queue_ll_t *queue_ll, request_t *dequeued_val, free_addresses_t *free_addresses) // todo : delete free memory array
 {
     if (!queue_ll)
         return EXIT_FAILURE;
@@ -108,20 +110,81 @@ int memory_check(queue_ll_t *queue_ll, free_addresses_t *free_addresses) // done
         if (mem_rear == free_addresses->addresses[i])
         {
             found = 1;
-            for (int j = i; j < free_addresses->count - 1; j++)
-            {
-                void *temp = free_addresses->addresses[j];
-                free_addresses->addresses[j] = free_addresses->addresses[j + 1];
-                free_addresses->addresses[j + 1] = temp;
-            }
+            // for (int j = i; j < free_addresses->count - 1; j++)
+            // {
+            //     void *temp = free_addresses->addresses[j];
+            //     free_addresses->addresses[j] = free_addresses->addresses[j + 1];
+            //     free_addresses->addresses[j + 1] = temp;
+            // }
         }
     }
-    if (found)
-        free_addresses->count--;
+    // if (found)
+        // free_addresses->count--;
     return found;
 }
 
-void free_addresses_count_equal(free_addresses_t *free_addresses, int *count)
+void free_addresses_count_equal(free_addresses_t *free_addresses, int *count) // todo
 {
     return;
+}
+
+void free_addresses_print(free_addresses_t *free_addresses)
+{
+    printf("N: %d\n", free_addresses->count);
+    printf("Addresses:\n");
+    for (int i = 0; i < free_addresses->count; i++)
+        printf("%d: %p\n", i, free_addresses->addresses[i]);
+}
+
+int free_addresses_compare(free_addresses_t *free_addresses_enqueue, free_addresses_t *free_addresses_dequeue)
+{
+    for (int i = 0; i < free_addresses_enqueue->count; i++)
+    {
+        if (free_addresses_enqueue->addresses[i] != free_addresses_dequeue->addresses[i])
+            return 1;
+    }
+    return 0;
+}
+
+void *free_addresses_remove_dup(free_addresses_t *free_addresses, int *free_addresses_single_count)
+{
+    *free_addresses_single_count = 0;
+    void **fa_tmp = calloc(free_addresses->count, sizeof(void *));
+    if (!fa_tmp)
+        return NULL;
+    
+    int count = 0;
+    for (int i = 0; i < free_addresses->count; i++)
+    {
+        int found = 0;
+        for (int j = 0; j < count; j++)
+        {
+            if (free_addresses->addresses[i] == fa_tmp[j])
+            {
+                found = 1;
+                break;
+            }
+        }
+        if (!found)
+            fa_tmp[count++] = free_addresses->addresses[i];
+    }
+    *free_addresses_single_count = count;
+    void **tmp = realloc(fa_tmp, count * sizeof(void *));
+    if (!tmp)
+        return NULL;
+    fa_tmp = tmp;
+    return fa_tmp;
+}
+
+void queue_ll_free(queue_ll_t *queue_ll)
+{
+    if (!queue_ll->front)
+        return;
+    struct ListNode *tmp;
+    while (queue_ll->front)
+    {
+        tmp = queue_ll->front;
+        queue_ll->front = queue_ll->front->next;
+        node_free(tmp);
+    }
 }
