@@ -13,7 +13,7 @@
 
 #define N_FILES 11
 #define NUM_PERCENTAGES 12
-#define NUM_TRIALS 500
+#define NUM_TRIALS 1000
 #define FILEPATH_LEN 25
 #define DATA_ARRAY_SIZE 100000
 

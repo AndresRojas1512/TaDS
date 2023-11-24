@@ -89,7 +89,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
 
     unsigned long long time_end = microseconds_now();
     unsigned long long time_system_elapsed = time_end - time_start;
-    // printf("\tSystem Time: %lld\n", time_system_elapsed);
+    printf("\tSystem Time: %lld\n", time_system_elapsed);
 
     double time_expected;
     if ((time_in_range->t1 + time_in_range->t2) / 2 * PROCESSED_REQUESTS > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * PROCESSED_REQUESTS)
@@ -99,6 +99,7 @@ void queue_sa_system(queue_sa_t *queue_sa, system_time_t *time_in_range, system_
     
     double error_margin = fabs(time_machine_work - time_expected) / time_expected * 100;
     statistic_total_print(time_machine_work, time_expected, error_margin, requests_in, requests_out, requests_failed, requests_calls, time_machine_idle);
+    printf("Failed: %d\n", requests_failed);
 }
 
 // QUEUE_LL_SYSTEM
@@ -227,8 +228,7 @@ void queue_ll_system(queue_ll_t *queue_ll, free_addresses_t *free_addresses, sys
     
     unsigned long long time_end = microseconds_now();
     unsigned long long time_system_elapsed = time_end - time_start;
-    // printf("\tSystem Time: %lld\n", time_system_elapsed);
-
+    printf("\tSystem Time: %lld\n", time_system_elapsed);
     double time_expected;
     if ((time_in_range->t1 + time_in_range->t2) / 2 * PROCESSED_REQUESTS > (time_out_range->t1 + time_out_range->t2) / 2 * request_repeat_times * PROCESSED_REQUESTS)
         time_expected = (time_in_range->t1 + time_in_range->t2) / 2 * PROCESSED_REQUESTS;
@@ -302,7 +302,7 @@ int time_range_validate(system_time_t *system_time, double llimit, double rlimit
     double t1_buf, t2_buf;
     if (scanf("%lf %lf", &t1_buf, &t2_buf) != 2)
         return ERROR_SYSTEM_TIME_INPUT;
-    if (t1_buf < llimit || t2_buf > rlimit || t2_buf < t1_buf)
+    if (t1_buf < llimit || t2_buf > rlimit || t2_buf < t1_buf || t1_buf < 0 || t2_buf < 0)
         return ERROR_SYSTEM_TIME_RANGE;
     system_time->t1 = t1_buf;
     system_time->t2 = t2_buf;
