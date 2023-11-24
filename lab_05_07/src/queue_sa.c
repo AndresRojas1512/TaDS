@@ -87,3 +87,10 @@ int queue_sa_validate_size(int *size)
         return ERROR_QUEUE_SA_SIZE_RANGE;
     return EXIT_SUCCESS;
 }
+
+void queue_sa_reset(queue_sa_t *queue_sa)
+{
+    queue_sa->front = -1;
+    queue_sa->rear = -1;
+    queue_sa->size = 0;
+}

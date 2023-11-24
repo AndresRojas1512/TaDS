@@ -32,7 +32,7 @@ int queue_sa_isfull(queue_sa_t *queue_sa);
 int enqueue_sa(queue_sa_t *queue_sa, request_t x);
 int dequeue_sa(queue_sa_t *queue_sa, request_t *dequeued_val);
 void queue_sa_print_general(queue_sa_t *queue_sa);
-
 int queue_sa_validate_size(int *size);
+void queue_sa_reset(queue_sa_t *queue_sa);
 
 #endif

@@ -3,6 +3,9 @@ CC := gcc
 CFLAGS := -std=c99 -pedantic -Wextra -Wvla -Wfloat-equal -Wfloat-conversion 
 DFLAGS := -g3 --coverage
 
+# Uncomment this line to enable time measurement mode (disabling prints)
+TM_FLAG := -DTM
+
 INC := inc
 OUT := out
 SRC := src
@@ -28,10 +31,10 @@ debug.lastbuildstate:
 	touch debug.lastbuildstate
 
 $(APP_EXE): $(OUT) | $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $@
+	$(CC) $(CFLAGS) $(TM_FLAG) $(OBJS) -o $@
 
 $(OUT)/%.o: $(SRC)/%.c 
-	$(CC) $(CFLAGS) -I$(INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(TM_FLAG) -I$(INC) -c $< -o $@
 
 $(OUT):
 	mkdir -p $@
