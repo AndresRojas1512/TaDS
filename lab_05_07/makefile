@@ -4,7 +4,7 @@ CFLAGS := -std=c99 -pedantic -Wextra -Wvla -Wfloat-equal -Wfloat-conversion
 DFLAGS := -g3 --coverage
 
 # Uncomment this line to enable time measurement mode (disabling prints)
-TM_FLAG := -DTM
+# TM_FLAG := -DTM
 
 INC := inc
 OUT := out
