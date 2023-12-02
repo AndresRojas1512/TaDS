@@ -9,6 +9,7 @@ int main(void)
     int exit_code = EXIT_SUCCESS;
     int choice;
     char filepath[STRING_MAX_SIZE + 1];
+    char filepath_out[] = "file_out.txt";
     FILE *file;
     FILE *file_graph;
 
@@ -19,7 +20,8 @@ int main(void)
     char bst_word_delete[STRING_MAX_SIZE + 1];
     char bst_word_search[STRING_MAX_SIZE + 1];
     node_t *bst_node_search;
-    char letter = 'f';
+    char letter = 'j';
+    int count;
 
     node_t *root = NULL;
 
@@ -56,6 +58,7 @@ int main(void)
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
                             printf("bst correctly initialized\n");
+                            printf("Height: %d\n", bst_find_height(root));
                         }
                     }
                     break;
@@ -121,6 +124,7 @@ int main(void)
                         fclose(file_graph);
                         printf("bst letters created\n");
                     }
+                    exit_code = file_delete_words(filepath, filepath_out, letter, &count);
                     break;
             }
         }

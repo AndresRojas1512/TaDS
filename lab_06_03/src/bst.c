@@ -182,6 +182,17 @@ node_t *bst_search(node_t *root, char *data)
     
     return bst_search(root->left, data);
 }
+
+/*
+Find Height
+*/
+int bst_find_height(node_t *root)
+{
+    if (!root)
+        return -1;
+    return maximum(bst_find_height(root->left), bst_find_height(root->right)) + 1;
+}
+
 /*
 Write .gv file (dot)
 */
@@ -223,4 +234,12 @@ void bst_graphviz_format(FILE *file, node_t *root)
     fprintf(file, "digraph BST {\n");
     bst_to_dot(file, root);
     fprintf(file, "}\n");
+}
+
+/*
+Maximum of two integers
+*/
+int maximum(int a, int b)
+{
+    return (a > b) ? a : b;
 }

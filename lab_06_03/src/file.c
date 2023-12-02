@@ -43,3 +43,33 @@ void string_array_print(char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], in
     for (int i = 0; i < string_array_len; i++)
         printf("%s\n", string_array[i]);
 }
+
+int file_delete_words(char *file_input_name, char *file_output_name, char letter, int *count)
+{
+    int exit_code = EXIT_SUCCESS;
+    FILE *file_input;
+    FILE *file_output;
+    char word[STRING_MAX_SIZE + 1];
+    *count = 0;
+
+    file_input = fopen(file_input_name, "r");
+    if (!file_input)
+        return EXIT_FAILURE;
+    
+    file_output = fopen(file_output_name, "w");
+    if (!file_output)
+        return EXIT_FAILURE;
+    
+    while (!(exit_code = string_read_validate(file_input, word)))
+    {
+        if (word[0] != letter)
+        {
+            fputs(word, file_output);
+            fputc('\n', file_output);
+            (*count)++;
+        }
+    }
+    fclose(file_input);
+    fclose(file_output);
+    return exit_code;
+}

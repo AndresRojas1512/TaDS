@@ -15,5 +15,6 @@
 int string_read_validate(FILE *file, char *string);
 int file_read_into_array(FILE *file, char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int *string_array_len);
 void string_array_print(char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int string_array_len);
+int file_delete_words(char *file_input_name, char *file_output_name, char letter, int *count);
 
 #endif
