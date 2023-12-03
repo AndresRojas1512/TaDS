@@ -3,6 +3,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
 #include "file.h"
 #include "bst.h"
 
@@ -16,5 +18,6 @@
 
 int complexity_analysis(void);
 int file_read_data(char *filename_in, char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int *string_array_len);
+unsigned long long microseconds_now(void);
 
 #endif

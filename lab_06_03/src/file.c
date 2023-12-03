@@ -44,6 +44,9 @@ void string_array_print(char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], in
         printf("%s\n", string_array[i]);
 }
 
+/*
+Delete words from file
+*/
 int file_delete_words(char *file_input_name, char *file_output_name, char letter, int *count)
 {
     int exit_code = EXIT_SUCCESS;
@@ -69,6 +72,9 @@ int file_delete_words(char *file_input_name, char *file_output_name, char letter
             (*count)++;
         }
     }
+    if (feof(file_input))
+        exit_code = EXIT_SUCCESS;
+    
     fclose(file_input);
     fclose(file_output);
     return exit_code;

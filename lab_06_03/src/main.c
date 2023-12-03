@@ -21,8 +21,8 @@ int main(void)
     char bst_word_delete[STRING_MAX_SIZE + 1];
     char bst_word_search[STRING_MAX_SIZE + 1];
     node_t *bst_node_search;
-    char letter = 'j';
-    int count;
+    char letter = 'm';
+    int count_delwords_file;
 
     node_t *root = NULL;
 
@@ -125,7 +125,7 @@ int main(void)
                         fclose(file_graph);
                         printf("bst letters created\n");
                     }
-                    exit_code = file_delete_words(filepath, filepath_out, letter, &count);
+                    exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
                     break;
                 case 9:
                     exit_code = complexity_analysis();
@@ -133,7 +133,7 @@ int main(void)
             }
         }
     }
-    while (choice != 0);
+    while (choice != 0 && choice != 9);
 
     return exit_code;
 }

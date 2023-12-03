@@ -23,6 +23,7 @@ node_t *bst_insert(node_t *root, char *data);
 node_t *bst_delete(node_t *root, char *data);
 node_t *bst_search(node_t *root, char *data);
 node_t *bst_delete_by_letter(node_t *root, char letter);
+node_t *bst_delete_min_node(node_t *root, int *delete_count, char *min_value);
 void bst_preorder(node_t *root);
 void bst_inorder(node_t *root);
 void bst_postorder(node_t *root);
