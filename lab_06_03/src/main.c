@@ -3,6 +3,7 @@
 #include "file.h"
 #include "bst.h"
 #include "ui.h"
+#include "complexity_analysis.h"
 
 int main(void)
 {
@@ -125,6 +126,9 @@ int main(void)
                         printf("bst letters created\n");
                     }
                     exit_code = file_delete_words(filepath, filepath_out, letter, &count);
+                    break;
+                case 9:
+                    exit_code = complexity_analysis();
                     break;
             }
         }
