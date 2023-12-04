@@ -21,7 +21,7 @@ int main(void)
     char bst_word_delete[STRING_MAX_SIZE + 1];
     char bst_word_search[STRING_MAX_SIZE + 1];
     node_t *bst_node_search;
-    char letter = 'm';
+    char letter;
     int count_delwords_file;
 
     node_t *root = NULL;
@@ -30,24 +30,30 @@ int main(void)
     {
         menu();
         if (input_choice(&choice))
-            puts("\nОшибка: Введите опцию (0 - 8).\n");
+            puts("\nОшибка: Введите опцию (0 - 9).\n");
         else
         {
             switch (choice)
             {
                 case 1:                
-                    printf("filename: ");
+                    printf("Имя файла: ");
                     exit_code = string_read_validate(stdin, filepath);
                     if (exit_code)
+                    {
+                        printf("Ошибка: Ввод имени файла.\n");
                         return exit_code;
+                    }
                     
                     file = fopen(filepath, "r");
                     if (!file)
+                    {
+                        printf("Ошибка: Файл не существует.\n");
                         return EXIT_FAILURE;
+                    }
                     
                     exit_code = file_read_into_array(file, string_array, &string_array_len);
                     if (exit_code)
-                        printf("Error: File Damaged\n");
+                        printf("Ошибка: Файл испорчен.\n");
                     fclose(file);
                     
                     if (!exit_code)
@@ -55,11 +61,11 @@ int main(void)
                         exit_code = bst_import(&root, string_array, string_array_len);
                         if (!exit_code)
                         {
-                            file_graph = fopen("arbol.gv", "w");
+                            file_graph = fopen("tree_graphic.gv", "w");
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
-                            printf("bst correctly initialized\n");
-                            printf("Height: %d\n", bst_find_height(root));
+                            printf("Дирево инициализировано.\n");
+                            printf("Высота дерева: %d\n", bst_find_height(root));
                         }
                     }
                     break;
@@ -73,59 +79,76 @@ int main(void)
                     bst_postorder(root);
                     break;
                 case 5:
-                    printf("enter the word: ");
+                    printf("Введите слово: ");
                     exit_code = string_read_validate(stdin, bst_word_insert);
                     if (!exit_code)
                     {
+                        printf("Введено: %s\n", bst_word_insert);
                         root = bst_insert(root, bst_word_insert);
-                        printf("insertion succesfull\n");
                         if (root)
                         {
-                            file_graph = fopen("arbol_insered.gv", "w");
+                            file_graph = fopen("tree_inserted.gv", "w");
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
-                            printf("bst inserted created\n");
+                            printf("Слово успешно добавлено.\n");
                         }
+                        else
+                            printf("Ошибка: Добавление слова.\n");
                     }
+                    else
+                        printf("Ошибка: Формат слова.\n");
                     break;
                 case 6:
-                    printf("enter the word: ");
+                    printf("Введите слово: ");
                     exit_code = string_read_validate(stdin, bst_word_delete);
                     if (!exit_code)
                     {
-                        printf("Word to delete: %s\n", bst_word_delete);
+                        printf("Введено: %s\n", bst_word_delete);
                         root = bst_delete(root, bst_word_delete);
                         if (root)
                         {
-                            file_graph = fopen("arbol_deleted.gv", "w");
+                            file_graph = fopen("tree_deleted.gv", "w");
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
-                            printf("bst deleted created\n");
+                            printf("Слово успешно удалено.\n");
                         }
+                        else
+                            printf("Внимание: Дерево стало пустым.\n");
                     }
                     break;
                 case 7:
-                    printf("enter the search word: ");
+                    printf("Введите слово: ");
                     exit_code = string_read_validate(stdin, bst_word_search);
                     if (!exit_code)
                     {
+                        printf("Введено: %s\n", bst_word_search);
                         bst_node_search = bst_search(root, bst_word_search);
                         if (bst_node_search)
-                            printf("found word: %s\n", bst_node_search->data);
+                            printf("Слово найдено: %s\n", bst_node_search->data);
                         else
-                            printf("no found\n");
+                            printf("Слово не найдено\n");
                     }
                     break;
                 case 8:
-                    root = bst_delete_by_letter(root, letter);
-                    if (root)
+                    printf("Введите букву: ");
+                    if (scanf("%c", &letter) != 1)
+                        printf("Ошибка: Ввод буквы\n");
+                    else
                     {
-                        file_graph = fopen("arbol_letters.gv", "w");
-                        bst_graphviz_format(file_graph, root);
-                        fclose(file_graph);
-                        printf("bst letters created\n");
+                        root = bst_delete_by_letter(root, letter);
+                        if (root)
+                        {
+                            file_graph = fopen("tree_letters.gv", "w");
+                            bst_graphviz_format(file_graph, root);
+                            fclose(file_graph);
+                            printf("Слова успешно удалены\n");
+                        }
+                        else
+                            printf("Внимание: дерево стало пустым\n");
+                        exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
+                        if (!exit_code)
+                            printf("Слова из файла были удалены\n");
                     }
-                    exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
                     break;
                 case 9:
                     exit_code = complexity_analysis();
@@ -134,6 +157,7 @@ int main(void)
         }
     }
     while (choice != 0 && choice != 9);
-
+    bst_free(root);
+    root = NULL;
     return exit_code;
 }

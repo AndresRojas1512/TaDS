@@ -243,3 +243,19 @@ int maximum(int a, int b)
 {
     return (a > b) ? a : b;
 }
+
+void bst_free(node_t *root)
+{
+    if (root == NULL)
+        return;
+    bst_free(root->left);
+    bst_free(root->right);
+    free(root);
+}
+
+int bst_node_count(node_t *root)
+{
+    if (!root)
+        return 0;
+    return 1 + bst_node_count(root->left) + bst_node_count(root->right);
+}

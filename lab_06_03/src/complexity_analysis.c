@@ -17,7 +17,7 @@ int complexity_analysis(void)
     for (int i = 0; i < DIRECTORIES_N; i++)
     {
         int dir_current = directories[i];
-        printf("directory: %d\n", directories[i]);
+        printf("\nКоличество слов: %d\n", directories[i]);
         for (int j = 0; j < PERCENTAGES_N; j++)
         {
             node_t *root = NULL;
@@ -25,7 +25,7 @@ int complexity_analysis(void)
             // array import
             char filename_in[FILEPATH_N];
             sprintf(filename_in, "data/%d/%d.txt", directories[i], percentages[j]);
-            printf("\t%s\n", filename_in);
+            printf("\tПроцент удаления: %d\n", percentages[j]);
             if (file_read_data(filename_in, string_array, &string_array_len))
                 return ERROR_FILE_READ_DATA;
             // bst import
@@ -33,16 +33,25 @@ int complexity_analysis(void)
             if (exit_code)
                 return EXIT_FAILURE;
             int height = bst_find_height(root);
-            printf("\theight: %d\n", height);
+            printf("\t\tВысота дерева: %d\n", height);
 
             // Tree Deletion
             unsigned long long time_tree = 0;
             for (int k = 0; k < times_n; k++)
             {
+                bst_free(root);
+                root = NULL;
+                exit_code = bst_import(&root, string_array, string_array_len);
+                if (exit_code)
+                    return EXIT_FAILURE;
+                
+                int count = bst_node_count(root);
+                // printf("Iter : %d, Count: %d\n", k, count);
                 unsigned long long beg_tree = microseconds_now();
                 root = bst_delete_by_letter(root, 'm');
                 unsigned long long end_tree = microseconds_now();
                 time_tree += end_tree - beg_tree;
+                // printf("Iter: %d, Time: %lld\n", k, end_tree - beg_tree);
             }
             data_time_tree[i][j] = time_tree / times_n;
 
@@ -58,8 +67,8 @@ int complexity_analysis(void)
             }
             data_time_file[i][j] = time_file / times_n;
 
-            printf("\tTime Tree: %f\n", data_time_tree[i][j]);
-            printf("\tTime File: %f\n", data_time_file[i][j]);
+            printf("\t\tвремя удаления на БДП (микросекунды): %f\n", data_time_tree[i][j]);
+            printf("\t\tВремя удаления в файле (микросекунды): %f\n", data_time_file[i][j]);
         }
     }
     return EXIT_SUCCESS;

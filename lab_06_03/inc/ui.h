@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define OPERARIONS_N 9
+
 #define ERROR_CHOICE_READ_UB 30
 #define ERROR_CHOICE_READ_RANGE 31
 

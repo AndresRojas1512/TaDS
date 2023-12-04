@@ -32,5 +32,7 @@ void bst_to_dot(FILE *file, node_t *root);
 void bst_graphviz_format(FILE *file, node_t *root);
 int maximum(int a, int b);
 int bst_find_height(node_t *root);
+void bst_free(node_t *root);
+int bst_node_count(node_t *root);
 
 #endif
