@@ -259,3 +259,59 @@ int bst_node_count(node_t *root)
         return 0;
     return 1 + bst_node_count(root->left) + bst_node_count(root->right);
 }
+
+/*
+Store the preorder traverse in an array
+*/
+void bst_store_inorder(node_t *root, char strings_sorted[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int *index)
+{
+    if (!root)
+        return;
+    bst_store_inorder(root->left, strings_sorted, index);
+    strcpy(strings_sorted[*index], root->data);
+    (*index)++;
+    bst_store_inorder(root->right, strings_sorted, index);
+}
+
+/*
+Balance the tree
+*/
+node_t *bst_build_balanced(char strings_sorted[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int start, int end)
+{
+    if (start > end)
+        return NULL;
+
+    int mid = (start + end) / 2;
+    node_t *root = node_create(strings_sorted[mid]);
+
+    root->left = bst_build_balanced(strings_sorted, start, mid - 1);
+    root->right = bst_build_balanced(strings_sorted, mid + 1, end);
+
+    return root;
+}
+
+/*
+Create the copy
+*/
+node_t *create_balanced_bst_copy(node_t *original_root)
+{
+    if (!original_root)
+        return NULL;
+
+    char strings_sorted[WORDS_MAX_AMOUNT][STRING_MAX_SIZE];
+    int index = 0;
+    bst_store_inorder(original_root, strings_sorted, &index);
+
+    return bst_build_balanced(strings_sorted, 0, index - 1);
+}
+
+node_t *bst_find(node_t *root, char *data)
+{
+    if (root == NULL || strcmp(root->data, data) == 0)
+        return root;
+
+    if (strcmp(data, root->data) < 0)
+        return bst_find(root->left, data);
+    else
+        return bst_find(root->right, data);
+}
