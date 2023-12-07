@@ -17,7 +17,7 @@ int complexity_analysis(void)
 
     int directories[] = {100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
     int percentages[] = {25, 50, 75, 100};
-    int times_n = 10;
+    int times_n = 10000;
 
     for (int i = 0; i < DIRECTORIES_N; i++)
     {
@@ -36,7 +36,7 @@ int complexity_analysis(void)
             */
             char filename_in[FILEPATH_N];
             sprintf(filename_in, "data/%d/%d.txt", directories[i], percentages[j]);
-            printf("\tПроцент удаления: %d\n", percentages[j]);
+            printf("\tПроцент удаления слов: %d\n", percentages[j]);
             if (file_read_data(filename_in, string_array, &string_array_len))
                 return ERROR_FILE_READ_DATA;
             /*
@@ -46,7 +46,7 @@ int complexity_analysis(void)
             if (exit_code)
                 return EXIT_FAILURE;
             int height = bst_find_height(root);
-            printf("\t\tВысота дерева: %d\n", height);
+            printf("\t\tВысота несбалансированного дерева: %d\n", height);
 
             /*
             Fill the string array sorted
@@ -79,6 +79,24 @@ int complexity_analysis(void)
             int height_rightmost = bst_find_height(root_rightmost);
             printf("\t\tВысота правосторонного дерева: %d\n", height_rightmost);
             
+            /*
+            Word to find selection
+            */
+            int word_index = (string_array_sorted_len * 3) / 4;
+            char *word_to_find = string_array_sorted[word_index];
+            // printf("DEBUG: Word index: %d\n", word_index);
+            // printf("DEBUG: Word: %s\n", word_to_find);
+
+            unsigned long long time_find_unbalanced = 0;
+            for (int k = 0; k < times_n; k++)
+            {
+                unsigned long long beg_unbalanced = microseconds_now();
+                bst_find(root, word_to_find);
+                unsigned long long end_unbalanced = microseconds_now();
+                time_find_unbalanced += (end_unbalanced - beg_unbalanced);
+            }
+            data_time_find_unbalanced[i] = time_find_unbalanced / times_n;
+
             /*
             Tree Words Deletion
             */
@@ -118,7 +136,6 @@ int complexity_analysis(void)
             /*
             Balanced Tree find word
             */
-            char *word_to_find = string_array_sorted[(WORDS_MAX_AMOUNT_CA * 3) / 4];
             unsigned long long time_find_balanced = 0;
             for (int k = 0; k < times_n; k++)
             {
@@ -130,32 +147,15 @@ int complexity_analysis(void)
                 // printf("Iter: %d, Time: %lld\n", k, end_balanced - beg_balanced);
             }
             data_time_find_balanced[i] = time_find_balanced / times_n;
-            /*
-            Unbalanced Tree find word // TODO
-            */
-            bst_free(root);
-            root = NULL;
-            exit_code = bst_import(&root, string_array, string_array_len);
-            if (exit_code)
-            {
-                printf("Error unbalanced time init.\n");
-                return EXIT_FAILURE;
-            }
-            unsigned long long time_find_unbalanced = 0;
-            for (int k = 0; k < times_n; k++)
-            {
-                unsigned long long beg_unbalanced = microseconds_now();
-                bst_find(root, word_to_find);
-                unsigned long long end_unbalanced = microseconds_now();
-                time_find_unbalanced += (end_unbalanced - beg_unbalanced);
-            }
-            data_time_find_unbalanced[i] = time_find_unbalanced / times_n;
+
             /*
             Right Most find word
             */
             unsigned long long time_find_rightmost = 0;
             for (int k = 0; k < times_n; k++)
             {
+                int height_right_most = bst_find_height(root_rightmost);
+                // printf("Debug right height: %d, word: %s, string_array_len: %d\n", height_right_most, word_to_find, string_array_sorted_len);
                 unsigned long long beg_rightmost = microseconds_now();
                 bst_find(root_rightmost, word_to_find);
                 unsigned long long end_rightmost = microseconds_now();
@@ -164,11 +164,32 @@ int complexity_analysis(void)
             }
             data_time_find_rightmost[i] = time_find_rightmost / times_n;
 
-            printf("\t\tвремя удаления на БДП (микросекунды): %f\n", data_time_tree[i][j]);
-            printf("\t\tВремя удаления в файле (микросекунды): %f\n", data_time_file[i][j]);
-            printf("\t\tВремя поиска на сбалансированном БДП (микросекунды): %f\n", data_time_find_balanced[i]);
-            printf("\t\tВремя поиска на правосторонном БДП (микросекунды): %f\n", data_time_find_rightmost[i]);
-            printf("\t\tВремя поиска на несбалансированном БДП (микросекунды): %f\n", data_time_find_unbalanced[i]);
+            /*
+            Unbalanced Tree find word
+            */
+            // bst_free(root);
+            // root = NULL;
+            // exit_code = bst_import(&root, string_array, string_array_len);
+            // if (exit_code)
+            // {
+            //     printf("Error unbalanced time init.\n");
+            //     return EXIT_FAILURE;
+            // }
+            // unsigned long long time_find_unbalanced = 0;
+            // for (int k = 0; k < times_n; k++)
+            // {
+            //     unsigned long long beg_unbalanced = microseconds_now();
+            //     bst_find(root, word_to_find);
+            //     unsigned long long end_unbalanced = microseconds_now();
+            //     time_find_unbalanced += (end_unbalanced - beg_unbalanced);
+            // }
+            // data_time_find_unbalanced[i] = time_find_unbalanced / times_n;
+
+            printf("\t\tвремя удаления на БДП (наносекунды): %f\n", data_time_tree[i][j]);
+            printf("\t\tВремя удаления в файле (наносекунды): %f\n", data_time_file[i][j]);
+            printf("\t\tВремя поиска на сбалансированном БДП (наносекунды): %f\n", data_time_find_balanced[i]);
+            printf("\t\tВремя поиска на правосторонном БДП (наносекунды): %f\n", data_time_find_rightmost[i]);
+            printf("\t\tВремя поиска на несбалансированном БДП (наносекунды): %f\n", data_time_find_unbalanced[i]);
 
         }
     }

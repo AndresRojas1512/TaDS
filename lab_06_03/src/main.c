@@ -40,7 +40,7 @@ int main(void)
                     exit_code = string_read_validate(stdin, filepath);
                     if (exit_code)
                     {
-                        printf("Ошибка: Ввод имени файла.\n");
+                        printf("Ошибка: Ввод названия файла.\n");
                         return exit_code;
                     }
                     
