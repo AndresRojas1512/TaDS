@@ -1,7 +1,7 @@
 #include "bst.h"
 
 /*
-Node create
+Node create. The string is static (strcmp)
 */
 node_t *node_create(char *data)
 {

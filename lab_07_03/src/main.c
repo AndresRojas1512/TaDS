@@ -24,9 +24,12 @@ int main(void)
     node_t *bst_node_search;
     char letter = 'm';
     int count_delwords_file;
-
+    // bst
     node_t *root = NULL;
-    hashtable_t hashtable;
+    // hashtable
+    hashtable_oa_t hashtable_oa;
+    hashtable_ec_t hashtable_ec;
+    char string_ht_deleted[STRING_MAX_SIZE + 1];
 
     do
     {
@@ -130,18 +133,16 @@ int main(void)
                     exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
                     break;
                 case 9:
-                    hashtable_init(&hashtable, HASHTABLE_SIZE);
-                    hashtable_print(&hashtable);
+                    // hashtable_init_oa(&hashtable_oa, HASHTABLE_SIZE);
+                    // hashtable_print_oa(&hashtable_oa);
+                    // for (int i = 0; i < HASHTABLE_SIZE; i++)
+                    //     exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i]);
+                    // hashtable_print_oa(&hashtable_oa);
+                    hashtable_init_ec(&hashtable_ec, HASHTABLE_SIZE);
+                    hashtable_print_ec(&hashtable_ec);
                     for (int i = 0; i < HASHTABLE_SIZE; i++)
-                    {
-                        exit_code = hashtable_insert(&hashtable, string_array[i]);
-                    }
-                    hashtable_print(&hashtable);
-                    if (hashtable_delete(&hashtable, "SUizjcZNfa"))
-                        printf("Deleted\n");
-                    else
-                        printf("Not Found\n");
-                    hashtable_print(&hashtable);
+                        exit_code = hashtable_insert_ec(&hashtable_ec, string_array[i]);
+                    hashtable_print_ec(&hashtable_ec);
                     break;
                 case 10:
                     exit_code = complexity_analysis();
