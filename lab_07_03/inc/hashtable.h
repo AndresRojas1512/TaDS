@@ -19,9 +19,9 @@ typedef struct string_t
 
 typedef struct hashtable_oa_t
 {
-    string_t *hashtable_arr[HASHTABLE_SIZE];
-    int capacity;
+    string_t **hashtable_arr;
     int size;
+    int capacity;
 } hashtable_oa_t;
 
 /*
@@ -42,12 +42,15 @@ typedef struct hashtable_ec_t
     int size;
 } hashtable_ec_t;
 
-void hashtable_init_oa(hashtable_oa_t *hashtable, int capacity);
-unsigned int hash(char *string);
+unsigned int hash(char *string, int hashtable_capacity);
+
+int hashtable_create_oa(hashtable_oa_t *hashtable_oa, int capacity);
+int hashtable_restructure_oa(hashtable_oa_t *hashtable_oa);
 void hashtable_print_oa(hashtable_oa_t *hashtable);
 int hashtable_insert_oa(hashtable_oa_t *hashtable, char *string);
 string_t *hashtable_find_oa(hashtable_oa_t *hashtable, char *string);
 string_t *hashtable_delete_oa(hashtable_oa_t *hashtable, char *string);
+void hashtable_free_oa(hashtable_oa_t *hashtable_oa);
 
 void hashtable_init_ec(hashtable_ec_t *hashtable_ec, int capacity);
 int hashtable_insert_ec(hashtable_ec_t *hashtable_ec, char *string);

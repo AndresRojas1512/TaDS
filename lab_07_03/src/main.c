@@ -40,110 +40,140 @@ int main(void)
         {
             switch (choice)
             {
-                case 1:                
-                    printf("filename: ");
-                    exit_code = string_read_validate(stdin, filepath);
-                    if (exit_code)
-                        return exit_code;
-                    
-                    file = fopen(filepath, "r");
-                    if (!file)
-                        return EXIT_FAILURE;
-                    
-                    exit_code = file_read_into_array(file, string_array, &string_array_len);
-                    if (exit_code)
-                        printf("Error: File Damaged\n");
-                    fclose(file);
-                    
-                    if (!exit_code)
+                case 1:
                     {
-                        exit_code = bst_import(&root, string_array, string_array_len);
+                        printf("filename: ");
+                        exit_code = string_read_validate(stdin, filepath);
+                        if (exit_code)
+                            return exit_code;
+                        
+                        file = fopen(filepath, "r");
+                        if (!file)
+                            return EXIT_FAILURE;
+                        
+                        exit_code = file_read_into_array(file, string_array, &string_array_len);
+                        if (exit_code)
+                            printf("Error: File Damaged\n");
+                        fclose(file);
+                        
                         if (!exit_code)
                         {
-                            file_graph = fopen("arbol.gv", "w");
-                            bst_graphviz_format(file_graph, root);
-                            fclose(file_graph);
-                            printf("bst correctly initialized\n");
-                            printf("Height: %d\n", bst_find_height(root));
+                            exit_code = bst_import(&root, string_array, string_array_len);
+                            if (!exit_code)
+                            {
+                                file_graph = fopen("arbol.gv", "w");
+                                bst_graphviz_format(file_graph, root);
+                                fclose(file_graph);
+                                printf("bst correctly initialized\n");
+                                printf("Height: %d\n", bst_find_height(root));
+                            }
                         }
+                        break;
                     }
-                    break;
                 case 2:
-                    bst_preorder(root);
-                    break;
+                    {
+                        bst_preorder(root);
+                        break;
+                    }
                 case 3:
-                    bst_inorder(root);
-                    break;
+                    {
+                        bst_inorder(root);
+                        break;
+                    }
                 case 4:
-                    bst_postorder(root);
-                    break;
+                    {
+                        bst_postorder(root);
+                        break;
+                    }
                 case 5:
-                    printf("enter the word: ");
-                    exit_code = string_read_validate(stdin, bst_word_insert);
-                    if (!exit_code)
                     {
-                        root = bst_insert(root, bst_word_insert);
-                        printf("insertion succesfull\n");
-                        if (root)
+                        printf("enter the word: ");
+                        exit_code = string_read_validate(stdin, bst_word_insert);
+                        if (!exit_code)
                         {
-                            file_graph = fopen("arbol_insered.gv", "w");
-                            bst_graphviz_format(file_graph, root);
-                            fclose(file_graph);
-                            printf("bst inserted created\n");
+                            root = bst_insert(root, bst_word_insert);
+                            printf("insertion succesfull\n");
+                            if (root)
+                            {
+                                file_graph = fopen("arbol_insered.gv", "w");
+                                bst_graphviz_format(file_graph, root);
+                                fclose(file_graph);
+                                printf("bst inserted created\n");
+                            }
                         }
+                        break;
                     }
-                    break;
                 case 6:
-                    printf("enter the word: ");
-                    exit_code = string_read_validate(stdin, bst_word_delete);
-                    if (!exit_code)
                     {
-                        printf("Word to delete: %s\n", bst_word_delete);
-                        root = bst_delete(root, bst_word_delete);
+                        printf("enter the word: ");
+                        exit_code = string_read_validate(stdin, bst_word_delete);
+                        if (!exit_code)
+                        {
+                            printf("Word to delete: %s\n", bst_word_delete);
+                            root = bst_delete(root, bst_word_delete);
+                            if (root)
+                            {
+                                file_graph = fopen("arbol_deleted.gv", "w");
+                                bst_graphviz_format(file_graph, root);
+                                fclose(file_graph);
+                                printf("bst deleted created\n");
+                            }
+                        }
+                        break;
+                    }
+                case 7:
+                    {
+                        printf("enter the search word: ");
+                        exit_code = string_read_validate(stdin, bst_word_search);
+                        if (!exit_code)
+                        {
+                            bst_node_search = bst_search(root, bst_word_search);
+                            if (bst_node_search)
+                                printf("found word: %s\n", bst_node_search->data);
+                            else
+                                printf("no found\n");
+                        }
+                        break;
+                    }
+                case 8:
+                    {
+                        root = bst_delete_by_letter(root, letter);
                         if (root)
                         {
-                            file_graph = fopen("arbol_deleted.gv", "w");
+                            file_graph = fopen("arbol_letters.gv", "w");
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
-                            printf("bst deleted created\n");
+                            printf("bst letters created\n");
                         }
+                        exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
+                        break;
                     }
-                    break;
-                case 7:
-                    printf("enter the search word: ");
-                    exit_code = string_read_validate(stdin, bst_word_search);
-                    if (!exit_code)
-                    {
-                        bst_node_search = bst_search(root, bst_word_search);
-                        if (bst_node_search)
-                            printf("found word: %s\n", bst_node_search->data);
-                        else
-                            printf("no found\n");
-                    }
-                    break;
-                case 8:
-                    root = bst_delete_by_letter(root, letter);
-                    if (root)
-                    {
-                        file_graph = fopen("arbol_letters.gv", "w");
-                        bst_graphviz_format(file_graph, root);
-                        fclose(file_graph);
-                        printf("bst letters created\n");
-                    }
-                    exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
-                    break;
                 case 9:
-                    // hashtable_init_oa(&hashtable_oa, HASHTABLE_SIZE);
-                    // hashtable_print_oa(&hashtable_oa);
-                    // for (int i = 0; i < HASHTABLE_SIZE; i++)
-                    //     exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i]);
-                    // hashtable_print_oa(&hashtable_oa);
-                    hashtable_init_ec(&hashtable_ec, HASHTABLE_SIZE);
-                    hashtable_print_ec(&hashtable_ec);
-                    for (int i = 0; i < HASHTABLE_SIZE; i++)
-                        exit_code = hashtable_insert_ec(&hashtable_ec, string_array[i]);
-                    hashtable_print_ec(&hashtable_ec);
-                    break;
+                    {
+                        double load_factor;
+                        hashtable_create_oa(&hashtable_oa, 10);
+                        hashtable_print_oa(&hashtable_oa);
+
+                        for (int i = 0; i < string_array_len && !exit_code; i++)
+                        {
+                            exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i]);
+                            load_factor = (double)hashtable_oa.size / (double)hashtable_oa.capacity;
+                            printf("LOAD FACTOR: %f\n", load_factor);
+                            if (load_factor > 0.7)
+                            {
+                                printf("Restructuring table...\n");
+                                exit_code = hashtable_restructure_oa(&hashtable_oa);
+                                if (exit_code)
+                                {
+                                    printf("Error: Restructuring: %d\n", exit_code);
+                                    break;
+                                }
+                                load_factor = (double)hashtable_oa.size / (double)hashtable_oa.capacity;
+                            }
+                        }
+                        hashtable_print_oa(&hashtable_oa);
+                        break;
+                    }
                 case 10:
                     exit_code = complexity_analysis();
                     break;
