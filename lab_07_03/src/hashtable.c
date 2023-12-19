@@ -84,26 +84,30 @@ int hashtable_restructure_oa(hashtable_oa_t *hashtable_oa)
 /*
 Insert open addressing
 */
-int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string)
+int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterations, int iters_n)
 {
+    *iterations = 0;
     if (!string)
         return EXIT_FAILURE;
-
     int index = hash(string, hashtable_oa->capacity);
+
     for (int i = 0; i < hashtable_oa->capacity; i++)
     {
         int try = (i + index) % hashtable_oa->capacity;
+        (*iterations)++;
         if (hashtable_oa->hashtable_arr[try] == NULL)
         {
             hashtable_oa->hashtable_arr[try] = (string_t *)malloc(sizeof(string_t));
             if (hashtable_oa->hashtable_arr[try] == NULL)
-                return EXIT_FAILURE;
+                return ERROR_OA_MEMORY_ALLOC;
             strcpy(hashtable_oa->hashtable_arr[try]->string, string);
             hashtable_oa->size++;
             return EXIT_SUCCESS;
         }
+        if (*iterations > iters_n)
+            return ERROR_OA_ITERATIONS_OVERFLOW;
     }
-    return EXIT_FAILURE;
+    return ERROR_OA_INSERT;
 }
 
 /*

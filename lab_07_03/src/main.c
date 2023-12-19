@@ -150,26 +150,32 @@ int main(void)
                     }
                 case 9:
                     {
-                        double load_factor;
+                        int iters_threshold = 4;
+                        int iterations = 0;
                         hashtable_create_oa(&hashtable_oa, 10);
                         hashtable_print_oa(&hashtable_oa);
 
-                        for (int i = 0; i < string_array_len && !exit_code; i++)
+                        for (int i = 0; i < string_array_len; i++)
                         {
-                            exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i]);
-                            load_factor = (double)hashtable_oa.size / (double)hashtable_oa.capacity;
-                            printf("LOAD FACTOR: %f\n", load_factor);
-                            if (load_factor > 0.7)
+                            exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i], &iterations, iters_threshold);
+
+                            if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
                             {
-                                printf("Restructuring table...\n");
+                                printf("Restructuring table due to too many iterations...\n");
                                 exit_code = hashtable_restructure_oa(&hashtable_oa);
                                 if (exit_code)
                                 {
-                                    printf("Error: Restructuring: %d\n", exit_code);
+                                    printf("Error restructuring table: %d\n", exit_code);
                                     break;
                                 }
-                                load_factor = (double)hashtable_oa.size / (double)hashtable_oa.capacity;
                             }
+                            else if (exit_code == EXIT_FAILURE)
+                            {
+                                printf("Error inserting element: %s\n", string_array[i]);
+                                break;
+                            }
+
+                            printf("Inserted: %s, Iterations: %d\n", string_array[i], iterations);
                         }
                         hashtable_print_oa(&hashtable_oa);
                         break;
