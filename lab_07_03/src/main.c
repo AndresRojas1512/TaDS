@@ -7,6 +7,7 @@
 #include "hashtable.h"
 #include "complexity_analysis.h"
 #include "macros_rc.h"
+#include "avl.h"
 
 int main(void)
 {
@@ -29,6 +30,7 @@ int main(void)
     int iter_threshold;
 
     node_t *root = NULL;
+    node_avl_t *root_avl = NULL;
     hashtable_oa_t hashtable_oa;
     hashtable_ec_t hashtable_ec;
 
@@ -72,6 +74,15 @@ int main(void)
                             fclose(file_graph);
                             printf("Дерево инициализировано.\n");
                             printf("Высота дерева: %d\n", bst_find_height(root));
+                        }
+                        if (!exit_code)
+                        {
+                            exit_code = avl_import(&root_avl, string_array, string_array_len);
+                            if (!exit_code)
+                            {
+                                printf("AVL дерево инициализировано.\n");
+                                printf("Высота AVL дерева: %d\n", bst_find_height(root));
+                            }
                         }
                         if (!exit_code)
                         {
@@ -194,29 +205,3 @@ int main(void)
     root = NULL;
     return exit_code;
 }
-//                 case 9:
-//                     {
-//                         int iters_threshold = 4;
-//                         exit_code = hashtable_oa_init(&hashtable_oa, string_array_len, string_array, string_array_len, iters_threshold);
-//                         if (!exit_code)
-//                             hashtable_print_oa(&hashtable_oa);
-//                         break;
-//                     }
-//                 case 10:
-//                     {
-//                         int iters_threshold = 4;
-//                         exit_code = hashtable_ec_init(&hashtable_ec, string_array_len, string_array, string_array_len, iters_threshold);
-//                         if (!exit_code)
-//                             hashtable_print_ec(&hashtable_ec);
-//                         break;
-//                     }
-//                 case 11:
-//                     exit_code = complexity_analysis();
-//                     break;
-//             }
-//         }
-//     }
-//     while (choice != 0 && choice != 10);
-
-//     return exit_code;
-// }
