@@ -35,12 +35,11 @@ int hashtable_create_oa(hashtable_oa_t *hashtable_oa, int capacity)
 }
 
 /*
-Restructure the hashtable open addressing
+Restructure the hashtable open addressing.
 */
 int hashtable_restructure_oa(hashtable_oa_t *hashtable_oa)
 {
     int new_capacity = hashtable_oa->capacity * 2;
-    int new_size = 0;
     string_t **new_table = (string_t **)malloc(new_capacity * sizeof(string_t *));
     if (!new_table)
         return EXIT_FAILURE;
@@ -48,43 +47,17 @@ int hashtable_restructure_oa(hashtable_oa_t *hashtable_oa)
     for (int i = 0; i < new_capacity; i++)
         new_table[i] = NULL;
 
-    for (int i = 0; i < hashtable_oa->capacity; i++)
-    {
-        if (hashtable_oa->hashtable_arr[i] != NULL)
-        {
-            int new_index = hash(hashtable_oa->hashtable_arr[i]->string, new_capacity);
-            for (int j = 0; j < new_capacity; j++)
-            {
-                int try = (j + new_index) % new_capacity;
-                if (new_table[try] == NULL)
-                {
-                    new_table[try] = (string_t *)malloc(sizeof(string_t));
-                    if (!new_table[try])
-                    {
-                        for (int k = 0; k < new_capacity; k++)
-                            free(new_table[k]);
-                        free(new_table);
-                        return EXIT_FAILURE;
-                    }
-                    strcpy(new_table[try]->string, hashtable_oa->hashtable_arr[i]->string);
-                    new_size++;
-                    break;
-                }
-            }
-        }
-    }
-
     hashtable_free_oa(hashtable_oa);
     hashtable_oa->hashtable_arr = new_table;
     hashtable_oa->capacity = new_capacity;
-    hashtable_oa->size = new_size;
+    hashtable_oa->size = 0;
     return EXIT_SUCCESS;
 }
 
 /*
-Insert open addressing
+Insert open addressing. Takes in count the amount of iterations
 */
-int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterations, int iters_n)
+int hashtable_insert_restructure_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterations, int iters_n)
 {
     *iterations = 0;
     if (!string)
@@ -95,6 +68,8 @@ int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterati
     {
         int try = (i + index) % hashtable_oa->capacity;
         (*iterations)++;
+        if (*iterations > iters_n)
+            return ERROR_OA_ITERATIONS_OVERFLOW;
         if (hashtable_oa->hashtable_arr[try] == NULL)
         {
             hashtable_oa->hashtable_arr[try] = (string_t *)malloc(sizeof(string_t));
@@ -104,8 +79,6 @@ int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterati
             hashtable_oa->size++;
             return EXIT_SUCCESS;
         }
-        if (*iterations > iters_n)
-            return ERROR_OA_ITERATIONS_OVERFLOW;
     }
     return ERROR_OA_INSERT;
 }
@@ -156,9 +129,11 @@ string_t *hashtable_delete_oa(hashtable_oa_t *hashtable_oa, char *string)
     {
         int try = (i + index) % hashtable_oa->capacity;
         if (hashtable_oa->hashtable_arr[try] != NULL && !strcmp(hashtable_oa->hashtable_arr[try]->string, string))
+        {
             tmp = hashtable_oa->hashtable_arr[try];
             hashtable_oa->hashtable_arr[try] = NULL;
             return tmp;
+        }
     }
     return NULL;
 }
@@ -169,16 +144,21 @@ void hashtable_free_oa(hashtable_oa_t *hashtable_oa)
         free(hashtable_oa->hashtable_arr[i]);
     free(hashtable_oa->hashtable_arr);
 }
+
 /*
 External chaining
 */
-// void hashtable_init_ec(hashtable_ec_t *hashtable_ec, int capacity) // done
-// {
-//     hashtable_ec->capacity = capacity;
-//     hashtable_ec->size = 0;
-//     for (int i = 0; i < capacity; i++)
-//         hashtable_ec->hashtable_ec_arr[i] = NULL;
-// }
+
+/*
+Create hashtable of external chaining
+*/
+void hashtable_init_ec(hashtable_ec_t *hashtable_ec, int capacity) // done
+{
+    hashtable_ec->capacity = capacity;
+    hashtable_ec->size = 0;
+    for (int i = 0; i < capacity; i++)
+        hashtable_ec->hashtable_ec_arr[i] = NULL;
+}
 
 // int hashtable_insert_ec(hashtable_ec_t *hashtable_ec, char *string)
 // {

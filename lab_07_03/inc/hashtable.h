@@ -6,6 +6,7 @@
 #include <string.h>
 
 #define HASHTABLE_SIZE 10
+#define WORDS_MAX_AMOUNT_OA 1000
 #define STRING_SIZE 25
 
 #define ERROR_HT_COLLISION 50
@@ -52,7 +53,7 @@ unsigned int hash(char *string, int hashtable_capacity);
 int hashtable_create_oa(hashtable_oa_t *hashtable_oa, int capacity);
 int hashtable_restructure_oa(hashtable_oa_t *hashtable_oa);
 void hashtable_print_oa(hashtable_oa_t *hashtable);
-int hashtable_insert_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterations, int iters_n);
+int hashtable_insert_restructure_oa(hashtable_oa_t *hashtable_oa, char *string, int *iterations, int iters_n);
 string_t *hashtable_find_oa(hashtable_oa_t *hashtable, char *string);
 string_t *hashtable_delete_oa(hashtable_oa_t *hashtable, char *string);
 void hashtable_free_oa(hashtable_oa_t *hashtable_oa);
