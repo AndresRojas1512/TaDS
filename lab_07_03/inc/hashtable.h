@@ -81,6 +81,8 @@ void hashtable_free_ec(hashtable_ec_t *hashtable_ec);
 int hashtable_insert_ec(hashtable_ec_t *hashtable_ec, char *string, int iters_threshold);
 void hashtable_print_ec(hashtable_ec_t *hashtable_ec);
 int hashtable_restructure_ec(hashtable_ec_t *hashtable_ec, int new_capacity);
+node_ht_t *hashtable_find_ec(hashtable_ec_t *hashtable_ec, char *string);
+node_ht_t *hashtable_delete_ec(hashtable_ec_t *hashtable_ec, char *string);
 
 void linked_list_append(node_ht_t **head, node_ht_t *new_node, int *list_length);
 void linked_list_free(node_ht_t **head);

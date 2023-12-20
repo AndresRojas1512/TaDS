@@ -13,6 +13,7 @@ struct node
     char data[STRING_MAX_SIZE + 1];
     node_t *right;
     node_t *left;
+    int height;
 };
 
 node_t *node_create(char *data);
@@ -35,6 +36,7 @@ int maximum(int a, int b);
 int bst_find_height(node_t *root);
 void bst_free(node_t *root);
 int bst_node_count(node_t *root);
+node_t *bst_findmin(node_t *root);
 
 void bst_store_inorder(node_t *root, char strings_sorted[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int *index);
 node_t *bst_build_balanced(char strings_sorted[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int start, int end);

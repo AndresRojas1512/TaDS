@@ -117,7 +117,7 @@ string_t *hashtable_find_oa(hashtable_oa_t *hashtable_oa, char *string)
 }
 
 /*
-Delete element from hashtable
+Delete element from hashtable OA
 */
 string_t *hashtable_delete_oa(hashtable_oa_t *hashtable_oa, char *string)
 {
@@ -247,6 +247,55 @@ void hashtable_free_ec(hashtable_ec_t *hashtable_ec)
 }
 
 /*
+Delete a word in a EC Hashtable
+*/
+node_ht_t *hashtable_delete_ec(hashtable_ec_t *hashtable_ec, char *string)
+{
+    if (!string)
+        return NULL;
+
+    int index = hash(string, hashtable_ec->capacity);
+    node_ht_t *current = hashtable_ec->hashtable_ec_arr[index];
+    node_ht_t *prev = NULL;
+
+    while (current != NULL)
+    {
+        if (strcmp(current->data, string) == 0)
+        {
+            if (prev == NULL)
+                hashtable_ec->hashtable_ec_arr[index] = current->next;
+            else
+                prev->next = current->next;
+            hashtable_ec->size--;
+            return current;
+        }
+        prev = current;
+        current = current->next;
+    }
+    return NULL;
+}
+
+/*
+Find a word in External Chain hashtable.
+*/
+node_ht_t *hashtable_find_ec(hashtable_ec_t *hashtable_ec, char *string)
+{
+    if (!string)
+        return NULL;
+
+    int index = hash(string, hashtable_ec->capacity);
+    node_ht_t *current = hashtable_ec->hashtable_ec_arr[index];
+
+    while (current != NULL)
+    {
+        if (!strcmp(current->data, string))
+            return current;
+        current = current->next;
+    }
+    return NULL;
+}
+
+/*
 Print hashtable EC
 */
 void hashtable_print_ec(hashtable_ec_t *hashtable_ec)
@@ -357,47 +406,3 @@ int hashtable_ec_init(hashtable_ec_t *hashtable_ec, int capacity, char string_ar
     }
     return EXIT_SUCCESS;
 }
-
-// node_ht_t *hashtable_delete_ec(hashtable_ec_t *hashtable_ec, char *string)
-// {
-//     if (!string)
-//         return NULL;
-
-//     int index = hash(string);
-//     node_ht_t *current = hashtable_ec->hashtable_ec_arr[index];
-//     node_ht_t *prev = NULL;
-
-//     while (current != NULL)
-//     {
-//         if (strcmp(current->data, string) == 0)
-//         {
-//             if (prev == NULL)
-//                 hashtable_ec->hashtable_ec_arr[index] = current->next;
-//             else
-//                 prev->next = current->next;
-//             hashtable_ec->size--;
-//             return current;
-//         }
-//         prev = current;
-//         current = current->next;
-//     }
-//     return NULL;
-// }
-
-// node_ht_t *hashtable_find_ec(hashtable_ec_t *hashtable_ec, char *string)
-// {
-//     if (!string)
-//         return NULL;
-
-//     int index = hash(string);
-//     node_ht_t *current = hashtable_ec->hashtable_ec_arr[index];
-
-//     while (current != NULL)
-//     {
-//         if (strcmp(current->data, string) == 0)
-//             return current;
-//         current = current->next;
-//     }
-
-//     return NULL;
-// }
