@@ -164,69 +164,59 @@ int hashtable_create_ec(hashtable_ec_t *hashtable_ec, int capacity)
     return EXIT_SUCCESS;
 }
 
-int hashtable_restructure_ec(hashtable_ec_t *hashtable_ec, int new_capacity) {
+/*
+Restrucutre the EC table
+*/
+int hashtable_restructure_ec(hashtable_ec_t *hashtable_ec, int new_capacity)
+{
     node_ht_t **new_table = (node_ht_t **)malloc(new_capacity * sizeof(node_ht_t *));
-    if (!new_table) {
-        return ERROR_EC_MEMORY_ALLOC; // Memory allocation failure
-    }
+    if (!new_table)
+        return ERROR_EC_MEMORY_ALLOC;
 
-    for (int i = 0; i < new_capacity; i++) {
+    for (int i = 0; i < new_capacity; i++)
         new_table[i] = NULL;
-    }
 
-    // Free the old table's nodes
-    for (int i = 0; i < hashtable_ec->capacity; i++) {
-        node_ht_t *current = hashtable_ec->hashtable_ec_arr[i];
-        while (current != NULL) {
-            node_ht_t *next = current->next;
-            free(current);  // Assuming each node was dynamically allocated
-            current = next;
-        }
-    }
-    free(hashtable_ec->hashtable_ec_arr); // Free the old table array
-
+    hashtable_free_ec(hashtable_ec);
     hashtable_ec->hashtable_ec_arr = new_table;
     hashtable_ec->capacity = new_capacity;
-    hashtable_ec->size = 0; // Reset size
+    hashtable_ec->size = 0;
     return EXIT_SUCCESS;
 }
 
-int hashtable_insert_ec(hashtable_ec_t *hashtable_ec, char *string, int iters_threshold) {
-    if (!string) {
-        return ERROR_EC_PARAMS; // Error due to invalid parameter
-    }
+/*
+Insert element to the EC table
+*/
+int hashtable_insert_ec(hashtable_ec_t *hashtable_ec, char *string, int iters_threshold)
+{
+    if (!string)
+        return ERROR_EC_PARAMS;
 
     int index = hash(string, hashtable_ec->capacity);
     int list_length = 0;
 
-    // Create a new node
     node_ht_t *new_node = node_ht_create(string);
-    if (!new_node) {
-        return ERROR_EC_MEMORY_ALLOC; // Error allocating memory for the new node
-    }
+    if (!new_node)
+        return ERROR_EC_MEMORY_ALLOC;
 
-    // Insert the node at the beginning of the list at the hash index
     new_node->next = hashtable_ec->hashtable_ec_arr[index];
     hashtable_ec->hashtable_ec_arr[index] = new_node;
     hashtable_ec->size++;
 
-    // Count the length of the list at this index to check against the threshold
     node_ht_t *current = new_node;
-    while (current) {
+    while (current)
+    {
         list_length++;
         current = current->next;
     }
+    if (list_length > iters_threshold)
+        return ERROR_EC_ITERATIONS_OVERFLOW;
 
-    // Check if the list length exceeds the threshold
-    if (list_length > iters_threshold) {
-        return ERROR_EC_ITERATIONS_OVERFLOW; // Signal that restructuring is needed
-    }
-
-    return EXIT_SUCCESS; // Successful insertion
+    return EXIT_SUCCESS;
 }
 
-
-
+/*
+Add to the end of the list
+*/
 void linked_list_append(node_ht_t **head, node_ht_t *new_node, int *list_length)
 {
     *list_length = 0;
