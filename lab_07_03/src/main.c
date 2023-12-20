@@ -39,8 +39,10 @@ int main(void)
 
     node_t *root = NULL;
     node_t *root_avl = NULL;
+
     hashtable_oa_t hashtable_oa;
     hashtable_ec_t hashtable_ec;
+    int iterations;
 
     do
     {
@@ -156,6 +158,7 @@ int main(void)
                         exit_code = string_read_validate(stdin, bst_word_insert);
                         if (!exit_code)
                         {
+                            // Insert BST
                             printf("Введено: %s\n", bst_word_insert);
                             root = bst_insert(root, bst_word_insert);
                             if (root)
@@ -168,6 +171,7 @@ int main(void)
                             else
                                 printf("Ошибка: Добавление слова в БДП.\n");
                             
+                            // Insert AVL
                             root_avl = avl_insert(root_avl, bst_word_insert);
                             if (root_avl)
                             {
@@ -179,6 +183,46 @@ int main(void)
                             else
                                 printf("Ошибка: Добавление слова в AVL.\n");
                             
+                            // Insert hashtable_oa
+                            do
+                            {
+                                exit_code = hashtable_insert_oa(&hashtable_oa, bst_word_insert, &iterations, iter_threshold);
+                                if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
+                                {
+                                    printf("Restructuring OA table...\n");
+                                    exit_code = hashtable_restructure_oa(&hashtable_oa);
+                                }
+                            }
+                            while (exit_code == ERROR_OA_ITERATIONS_OVERFLOW);
+
+                            if (exit_code != EXIT_SUCCESS)
+                                printf("Failed to insert in OA table. Error code: %d\n", exit_code);
+                            else
+                            {
+                                printf("Word inserted in OA table successfully.\n");
+                                hashtable_print_oa(&hashtable_oa);
+                            }
+                            
+                            // Insert hashtable_ec
+                            do
+                            {
+                                exit_code = hashtable_insert_ec(&hashtable_ec, bst_word_insert, iter_threshold);
+                                if (exit_code == ERROR_EC_ITERATIONS_OVERFLOW)
+                                {
+                                    printf("Restructuring EC table...\n");
+                                    int new_capacity = hashtable_ec.capacity * 2;
+                                    exit_code = hashtable_restructure_ec(&hashtable_ec, new_capacity);
+                                }
+                            }
+                            while (exit_code == ERROR_EC_ITERATIONS_OVERFLOW);
+
+                            if (exit_code != EXIT_SUCCESS)
+                                printf("Failed to insert in EC table. Error code: %d\n", exit_code);
+                            else
+                            {
+                                printf("Word inserted in EC table successfully.\n");
+                                hashtable_print_ec(&hashtable_ec);
+                            }
                         }
                         else
                             printf("Ошибка: Формат слова.\n");
@@ -276,6 +320,7 @@ int main(void)
                         printf("Ошибка: Ввод буквы\n");
                     else
                     {
+                        // Delete by letter in BST
                         root = bst_delete_by_letter(root, letter);
                         if (root)
                         {
@@ -287,6 +332,7 @@ int main(void)
                         else
                             printf("Внимание: БДП стало пустым\n");
                         
+                        // Delete by letter in AVL
                         root_avl = avl_delete_by_letter(root_avl, letter);
                         if (root_avl)
                         {
@@ -297,6 +343,14 @@ int main(void)
                         }
                         else
                             printf("Внимание: AVL стало пустым\n");
+                        
+                        // Delete by letter hashtable OA
+                        hashtable_delete_by_letter_oa(&hashtable_oa, letter);
+                        hashtable_print_oa(&hashtable_oa);
+
+                        // Delete by letter hashtable EC
+                        hashtable_delete_by_letter_ec(&hashtable_ec, letter);
+                        hashtable_print_ec(&hashtable_ec);
                     }
                     break;
                 case 9:

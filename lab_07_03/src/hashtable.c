@@ -138,6 +138,24 @@ string_t *hashtable_delete_oa(hashtable_oa_t *hashtable_oa, char *string)
     return NULL;
 }
 
+void hashtable_delete_by_letter_oa(hashtable_oa_t *hashtable_oa, char letter)
+{
+    if (!hashtable_oa)
+        return;
+
+    for (int i = 0; i < hashtable_oa->capacity; i++)
+    {
+        string_t *current_string = hashtable_oa->hashtable_arr[i];
+        if (current_string != NULL && current_string->string[0] == letter)
+        {
+            free(current_string);
+            hashtable_oa->hashtable_arr[i] = NULL;
+            hashtable_oa->size--;
+        }
+    }
+}
+
+
 void hashtable_free_oa(hashtable_oa_t *hashtable_oa)
 {
     for (int i = 0; i < hashtable_oa->capacity; i++)
@@ -294,6 +312,33 @@ node_ht_t *hashtable_find_ec(hashtable_ec_t *hashtable_ec, char *string)
     }
     return NULL;
 }
+
+/*
+Delete words by letter in hashtable_ec
+*/
+void hashtable_delete_by_letter_ec(hashtable_ec_t *hashtable_ec, char letter)
+{
+    if (!hashtable_ec)
+        return;
+
+    for (int i = 0; i < hashtable_ec->capacity; i++)
+    {
+        node_ht_t **current_node = &(hashtable_ec->hashtable_ec_arr[i]);
+        while (*current_node != NULL)
+        {
+            if ((*current_node)->data[0] == letter)
+            {
+                node_ht_t *temp = *current_node;
+                *current_node = (*current_node)->next;
+                free(temp);
+                hashtable_ec->size--;
+            }
+            else
+                current_node = &((*current_node)->next);
+        }
+    }
+}
+
 
 /*
 Print hashtable EC
