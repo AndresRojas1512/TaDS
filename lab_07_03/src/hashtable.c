@@ -299,6 +299,65 @@ node_ht_t *node_ht_create(char *string)
     return new_node;
 }
 
+/*
+Init Functions
+*/
+int hashtable_oa_init(hashtable_oa_t *hashtable_oa, int capacity, char string_array[][STRING_SIZE], int string_array_len, int iters_threshold)
+{
+    int iterations, exit_code;
+    if (hashtable_create_oa(hashtable_oa, capacity) != EXIT_SUCCESS)
+        return ERROR_OA_MEMORY_ALLOC;
+
+    bool all_elements_inserted = false;
+    while (!all_elements_inserted)
+    {
+        all_elements_inserted = true;
+        for (int i = 0; i < string_array_len; i++)
+        {
+            exit_code = hashtable_insert_oa(hashtable_oa, string_array[i], &iterations, iters_threshold);
+            if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
+            {
+                printf("Restructuring table...\n");
+                if (hashtable_restructure_oa(hashtable_oa) != EXIT_SUCCESS)
+                    return ERROR_OA_MEMORY_ALLOC;
+                all_elements_inserted = false;
+                break;
+            }
+            else if (exit_code != EXIT_SUCCESS)
+                return exit_code;
+        }
+    }
+    return EXIT_SUCCESS;
+}
+
+int hashtable_ec_init(hashtable_ec_t *hashtable_ec, int capacity, char string_array[][STRING_SIZE], int string_array_len, int iters_threshold)
+{
+    if (hashtable_create_ec(hashtable_ec, capacity) != EXIT_SUCCESS)
+        return ERROR_EC_MEMORY_ALLOC;
+    while (true)
+    {
+        bool restructuring_needed = false;
+        for (int i = 0; i < string_array_len; i++)
+        {
+            int exit_code = hashtable_insert_ec(hashtable_ec, string_array[i], iters_threshold);
+            if (exit_code == ERROR_EC_ITERATIONS_OVERFLOW)
+            {
+                printf("Restructuring table...\n");
+                int new_capacity = hashtable_ec->capacity * 2;
+                if (hashtable_restructure_ec(hashtable_ec, new_capacity) != EXIT_SUCCESS)
+                    return ERROR_EC_MEMORY_ALLOC;
+                restructuring_needed = true;
+                break;
+            }
+            else if (exit_code != EXIT_SUCCESS)
+                return exit_code;
+        }
+        if (!restructuring_needed)
+            break;
+    }
+    return EXIT_SUCCESS;
+}
+
 // node_ht_t *hashtable_delete_ec(hashtable_ec_t *hashtable_ec, char *string)
 // {
 //     if (!string)

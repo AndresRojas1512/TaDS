@@ -3,16 +3,17 @@
 void menu(void)
 {
     printf("\n");
-    puts("1. Init BST");
-    puts("2. Preorder Print");
-    puts("3. Inorder Print");
-    puts("4. Postorder Print");
-    puts("5. Insert node");
-    puts("6. Delete node");
-    puts("7. Search node");
-    puts("8. Delete Words with letter");
-    puts("9. Hashtable");
-    puts("10. Complexity Analysis");
+    puts("1. Инициализации деревьев и таблиц.");
+    puts("2. Префиксный обход (дерево).");
+    puts("3. Инфиксный обход (дерево).");
+    puts("4. Постфиксный обход (дерево).");
+    puts("5. Добавление слова.");
+    puts("6. Удаление слова.");
+    puts("7. Поиск слова.");
+    puts("8. Удаление слов с заданной буквой.");
+    puts("9. ");
+    puts("10. ");
+    puts("11. ");
     puts("0. Выход\n");
 }
 
@@ -33,4 +34,13 @@ void clean_buffer(void)
 {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
+}
+
+int input_iter_threshold(int *iter_threshold)
+{
+    if (scanf("%d", iter_threshold) != 1)
+        return ERROR_SCANF;
+    if (*iter_threshold <= 0 || *iter_threshold > MAX_ITER_THRESHOLD)
+        return ERROR_INPUT_RANGE;
+    return EXIT_SUCCESS;
 }

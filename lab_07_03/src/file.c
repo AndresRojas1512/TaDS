@@ -1,8 +1,5 @@
 #include "file.h"
 
-/*
-Validate a single word from the file
-*/
 int string_read_validate(FILE *file, char *string)
 {
     int exit_code = EXIT_SUCCESS;
@@ -23,9 +20,6 @@ int string_read_validate(FILE *file, char *string)
     return exit_code;
 }
 
-/*
-Save each word into the array
-*/
 int file_read_into_array(FILE *file, char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int *string_array_len)
 {
     int i = 0;
@@ -44,9 +38,6 @@ int file_read_into_array(FILE *file, char string_array[WORDS_MAX_AMOUNT][STRING_
     return exit_code;
 }
 
-/*
-Print the array of strings
-*/
 void string_array_print(char string_array[WORDS_MAX_AMOUNT][STRING_MAX_SIZE], int string_array_len)
 {
     for (int i = 0; i < string_array_len; i++)

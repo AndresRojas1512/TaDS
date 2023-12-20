@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #define STRING_SIZE 25
 #define HASHTABLE_SIZE 10
@@ -86,6 +87,12 @@ void linked_list_free(node_ht_t **head);
 void linked_list_print(node_ht_t *head);
 
 node_ht_t *node_ht_create(char *string);
+
+/*
+Init Functions
+*/
+int hashtable_oa_init(hashtable_oa_t *hashtable_oa, int capacity, char string_array[][STRING_SIZE], int string_array_len, int iters_threshold);
+int hashtable_ec_init(hashtable_ec_t *hashtable_ec, int capacity, char string_array[][STRING_SIZE], int string_array_len, int iters_threshold);
 
 
 #endif

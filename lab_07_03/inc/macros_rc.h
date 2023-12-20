@@ -1,0 +1,8 @@
+#ifndef MACROS_RC_H
+#define MACROS_RC_H
+
+#define ERROR_INPUT_THRESHOLD_M 10
+#define ERROR_FILENAME_FORMAT 11
+#define ERROR_FILE_OPENING 12
+
+#endif

@@ -6,6 +6,7 @@
 #include "ui.h"
 #include "hashtable.h"
 #include "complexity_analysis.h"
+#include "macros_rc.h"
 
 int main(void)
 {
@@ -23,214 +24,199 @@ int main(void)
     char bst_word_delete[STRING_MAX_SIZE + 1];
     char bst_word_search[STRING_MAX_SIZE + 1];
     node_t *bst_node_search;
-    char letter = 'm';
+    char letter;
     int count_delwords_file;
-    // bst
+    int iter_threshold;
+
     node_t *root = NULL;
-    // hashtable
     hashtable_oa_t hashtable_oa;
     hashtable_ec_t hashtable_ec;
-    char string_ht_deleted[STRING_MAX_SIZE + 1];
 
     do
     {
         menu();
         if (input_choice(&choice))
-            puts("\nОшибка: Введите опцию (0 - 8).\n");
+            puts("\nОшибка: Введите опцию (0 - 9).\n");
         else
         {
             switch (choice)
             {
-                case 1:
+                case 1:                
+                    printf("Имя файла: ");
+                    exit_code = string_read_validate(stdin, filepath);
+                    if (exit_code)
                     {
-                        printf("filename: ");
-                        exit_code = string_read_validate(stdin, filepath);
-                        if (exit_code)
-                            return exit_code;
-                        
-                        file = fopen(filepath, "r");
-                        if (!file)
-                            return EXIT_FAILURE;
-                        
-                        exit_code = file_read_into_array(file, string_array, &string_array_len);
-                        if (exit_code)
-                            printf("Error: File Damaged\n");
-                        fclose(file);
-                        
+                        printf("Ошибка: Ввод названия файла.\n");
+                        return ERROR_FILENAME_FORMAT;
+                    }
+                    
+                    file = fopen(filepath, "r");
+                    if (!file)
+                    {
+                        printf("Ошибка: Файл не существует.\n");
+                        return ERROR_FILE_OPENING;
+                    }
+                    
+                    exit_code = file_read_into_array(file, string_array, &string_array_len);
+                    if (exit_code)
+                        printf("Ошибка: Файл испорчен.\n");
+                    fclose(file);
+                    
+                    if (!exit_code)
+                    {
+                        exit_code = bst_import(&root, string_array, string_array_len);
                         if (!exit_code)
                         {
-                            exit_code = bst_import(&root, string_array, string_array_len);
+                            file_graph = fopen("tree_graphic.gv", "w");
+                            bst_graphviz_format(file_graph, root);
+                            fclose(file_graph);
+                            printf("Дерево инициализировано.\n");
+                            printf("Высота дерева: %d\n", bst_find_height(root));
+                        }
+                        if (!exit_code)
+                        {
+                            printf("Введите количество максимальных коллизий (1 - 20): ");
+                            exit_code = input_iter_threshold(&iter_threshold);
                             if (!exit_code)
                             {
-                                file_graph = fopen("arbol.gv", "w");
-                                bst_graphviz_format(file_graph, root);
-                                fclose(file_graph);
-                                printf("bst correctly initialized\n");
-                                printf("Height: %d\n", bst_find_height(root));
+                                exit_code = hashtable_oa_init(&hashtable_oa, string_array_len, string_array, string_array_len, iter_threshold);
+                                if (!exit_code)
+                                {
+                                    exit_code = hashtable_ec_init(&hashtable_ec, string_array_len, string_array, string_array_len, iter_threshold);
+                                    if (!exit_code)
+                                    {
+                                        printf("Таблицы инициализированы\n");
+                                        printf("Таблица на основе метода Внутренее хэрирование\n");
+                                        hashtable_print_oa(&hashtable_oa);
+                                        printf("Таблица на основе метода Внешнее хэрирование\n");
+                                        hashtable_print_ec(&hashtable_ec);
+                                    }
+                                }
                             }
-                        }
-                        break;
-                    }
-                case 2:
-                    {
-                        bst_preorder(root);
-                        break;
-                    }
-                case 3:
-                    {
-                        bst_inorder(root);
-                        break;
-                    }
-                case 4:
-                    {
-                        bst_postorder(root);
-                        break;
-                    }
-                case 5:
-                    {
-                        printf("enter the word: ");
-                        exit_code = string_read_validate(stdin, bst_word_insert);
-                        if (!exit_code)
-                        {
-                            root = bst_insert(root, bst_word_insert);
-                            printf("insertion succesfull\n");
-                            if (root)
-                            {
-                                file_graph = fopen("arbol_insered.gv", "w");
-                                bst_graphviz_format(file_graph, root);
-                                fclose(file_graph);
-                                printf("bst inserted created\n");
-                            }
-                        }
-                        break;
-                    }
-                case 6:
-                    {
-                        printf("enter the word: ");
-                        exit_code = string_read_validate(stdin, bst_word_delete);
-                        if (!exit_code)
-                        {
-                            printf("Word to delete: %s\n", bst_word_delete);
-                            root = bst_delete(root, bst_word_delete);
-                            if (root)
-                            {
-                                file_graph = fopen("arbol_deleted.gv", "w");
-                                bst_graphviz_format(file_graph, root);
-                                fclose(file_graph);
-                                printf("bst deleted created\n");
-                            }
-                        }
-                        break;
-                    }
-                case 7:
-                    {
-                        printf("enter the search word: ");
-                        exit_code = string_read_validate(stdin, bst_word_search);
-                        if (!exit_code)
-                        {
-                            bst_node_search = bst_search(root, bst_word_search);
-                            if (bst_node_search)
-                                printf("found word: %s\n", bst_node_search->data);
                             else
-                                printf("no found\n");
+                            {
+                                printf("Ошибка: Невалидное значение.\n");
+                                exit_code = ERROR_INPUT_THRESHOLD_M;
+                            }
+
                         }
-                        break;
                     }
+                    break;
+                case 2:
+                    bst_preorder(root);
+                    break;
+                case 3:
+                    bst_inorder(root);
+                    break;
+                case 4:
+                    bst_postorder(root);
+                    break;
+                case 5:
+                    printf("Введите слово: ");
+                    exit_code = string_read_validate(stdin, bst_word_insert);
+                    if (!exit_code)
+                    {
+                        printf("Введено: %s\n", bst_word_insert);
+                        root = bst_insert(root, bst_word_insert);
+                        if (root)
+                        {
+                            file_graph = fopen("tree_inserted.gv", "w");
+                            bst_graphviz_format(file_graph, root);
+                            fclose(file_graph);
+                            printf("Слово успешно добавлено.\n");
+                        }
+                        else
+                            printf("Ошибка: Добавление слова.\n");
+                    }
+                    else
+                        printf("Ошибка: Формат слова.\n");
+                    break;
+                case 6:
+                    printf("Введите слово: ");
+                    exit_code = string_read_validate(stdin, bst_word_delete);
+                    if (!exit_code)
+                    {
+                        printf("Введено: %s\n", bst_word_delete);
+                        root = bst_delete(root, bst_word_delete);
+                        if (root)
+                        {
+                            file_graph = fopen("tree_deleted.gv", "w");
+                            bst_graphviz_format(file_graph, root);
+                            fclose(file_graph);
+                            printf("Слово успешно удалено.\n");
+                        }
+                        else
+                            printf("Внимание: Дерево стало пустым.\n");
+                    }
+                    break;
+                case 7:
+                    printf("Введите слово: ");
+                    exit_code = string_read_validate(stdin, bst_word_search);
+                    if (!exit_code)
+                    {
+                        printf("Введено: %s\n", bst_word_search);
+                        bst_node_search = bst_search(root, bst_word_search);
+                        if (bst_node_search)
+                            printf("Слово найдено: %s\n", bst_node_search->data);
+                        else
+                            printf("Слово не найдено\n");
+                    }
+                    break;
                 case 8:
+                    printf("Введите букву: ");
+                    if (scanf("%c", &letter) != 1)
+                        printf("Ошибка: Ввод буквы\n");
+                    else
                     {
                         root = bst_delete_by_letter(root, letter);
                         if (root)
                         {
-                            file_graph = fopen("arbol_letters.gv", "w");
+                            file_graph = fopen("tree_letters.gv", "w");
                             bst_graphviz_format(file_graph, root);
                             fclose(file_graph);
-                            printf("bst letters created\n");
+                            printf("Слова успешно удалены\n");
                         }
+                        else
+                            printf("Внимание: дерево стало пустым\n");
                         exit_code = file_delete_words(filepath, filepath_out, letter, &count_delwords_file);
-                        break;
+                        if (!exit_code)
+                            printf("Слова из файла были удалены\n");
                     }
+                    break;
                 case 9:
-                    {
-                        int iters_threshold = 2;
-                        int iterations = 0;
-                        int insert_extra;
-                        hashtable_create_oa(&hashtable_oa, 10);
-                        hashtable_print_oa(&hashtable_oa);
-
-                        int start_index = 0;
-                        while (start_index < string_array_len)
-                        {
-                            for (int i = start_index; i < string_array_len; i++)
-                            {
-                                exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i], &iterations, iters_threshold);
-                                // printf("Inserted: %s, Iterations: %d\n", string_array[i], iterations);
-                                if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
-                                {
-                                    hashtable_print_oa(&hashtable_oa);
-                                    printf("Restructuring table...\n");
-                                    if (hashtable_restructure_oa(&hashtable_oa) != EXIT_SUCCESS)
-                                    {
-                                        printf("Error restructuring table.\n");
-                                        return -1;
-                                    }
-                                    start_index = 0;
-                                    break;
-                                }
-                                else if (exit_code == EXIT_SUCCESS)
-                                {
-                                    printf("Inserted: %s, Iterations: %d\n", string_array[i], iterations);
-                                    if (i == string_array_len - 1)
-                                        start_index = string_array_len;
-                                }
-                                else
-                                {
-                                    printf("Error inserting element: %s\n", string_array[i]);
-                                    return -1;
-                                }
-                            }
-                        }
-                        hashtable_print_oa(&hashtable_oa);
-                        break;
-                    }
-                case 10:
-                    {
-                        int list_length = 0;
-                        int iters_threshold = 1;
-                        hashtable_create_ec(&hashtable_ec, 10);
-
-                        while (true) {
-                            bool restructuring_needed = false;
-                            for (int i = 0; i < string_array_len; i++) {
-                                int exit_code = hashtable_insert_ec(&hashtable_ec, string_array[i], iters_threshold);
-                                if (exit_code == ERROR_EC_ITERATIONS_OVERFLOW) {
-                                    printf("Restructuring table...\n");
-                                    int new_capacity = hashtable_ec.capacity * 2;
-                                    if (hashtable_restructure_ec(&hashtable_ec, new_capacity) != EXIT_SUCCESS) {
-                                        printf("Error restructuring table.\n");
-                                        return -1;
-                                    }
-                                    restructuring_needed = true;
-                                    break;
-                                } else if (exit_code != EXIT_SUCCESS) {
-                                    printf("Error inserting element: %s\n", string_array[i]);
-                                    return -1;
-                                }
-                            }
-
-                            if (!restructuring_needed) {
-                                break; // All elements inserted without exceeding threshold
-                            }
-                        }
-                        hashtable_print_ec(&hashtable_ec);
-                        break;
-                    }
-                case 11:
                     exit_code = complexity_analysis();
                     break;
             }
         }
     }
-    while (choice != 0 && choice != 10);
-
+    while (choice != 0 && choice != 9);
+    bst_free(root);
+    root = NULL;
     return exit_code;
 }
+//                 case 9:
+//                     {
+//                         int iters_threshold = 4;
+//                         exit_code = hashtable_oa_init(&hashtable_oa, string_array_len, string_array, string_array_len, iters_threshold);
+//                         if (!exit_code)
+//                             hashtable_print_oa(&hashtable_oa);
+//                         break;
+//                     }
+//                 case 10:
+//                     {
+//                         int iters_threshold = 4;
+//                         exit_code = hashtable_ec_init(&hashtable_ec, string_array_len, string_array, string_array_len, iters_threshold);
+//                         if (!exit_code)
+//                             hashtable_print_ec(&hashtable_ec);
+//                         break;
+//                     }
+//                 case 11:
+//                     exit_code = complexity_analysis();
+//                     break;
+//             }
+//         }
+//     }
+//     while (choice != 0 && choice != 10);
+
+//     return exit_code;
+// }
