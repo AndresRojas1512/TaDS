@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include "file.h"
 #include "bst.h"
 #include "ui.h"
@@ -156,12 +157,12 @@ int main(void)
                         hashtable_create_oa(&hashtable_oa, 10);
                         hashtable_print_oa(&hashtable_oa);
 
-                        int start_index = 0; // Index to keep track of where to start insertion
+                        int start_index = 0;
                         while (start_index < string_array_len)
                         {
                             for (int i = start_index; i < string_array_len; i++)
                             {
-                                exit_code = hashtable_insert_restructure_oa(&hashtable_oa, string_array[i], &iterations, iters_threshold);
+                                exit_code = hashtable_insert_oa(&hashtable_oa, string_array[i], &iterations, iters_threshold);
                                 // printf("Inserted: %s, Iterations: %d\n", string_array[i], iterations);
                                 if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
                                 {
@@ -192,6 +193,38 @@ int main(void)
                         break;
                     }
                 case 10:
+                    {
+                        int list_length = 0;
+                        int iters_threshold = 1;
+                        hashtable_create_ec(&hashtable_ec, 10);
+
+                        while (true) {
+                            bool restructuring_needed = false;
+                            for (int i = 0; i < string_array_len; i++) {
+                                int exit_code = hashtable_insert_ec(&hashtable_ec, string_array[i], iters_threshold);
+                                if (exit_code == ERROR_EC_ITERATIONS_OVERFLOW) {
+                                    printf("Restructuring table...\n");
+                                    int new_capacity = hashtable_ec.capacity * 2;
+                                    if (hashtable_restructure_ec(&hashtable_ec, new_capacity) != EXIT_SUCCESS) {
+                                        printf("Error restructuring table.\n");
+                                        return -1;
+                                    }
+                                    restructuring_needed = true;
+                                    break;
+                                } else if (exit_code != EXIT_SUCCESS) {
+                                    printf("Error inserting element: %s\n", string_array[i]);
+                                    return -1;
+                                }
+                            }
+
+                            if (!restructuring_needed) {
+                                break; // All elements inserted without exceeding threshold
+                            }
+                        }
+                        hashtable_print_ec(&hashtable_ec);
+                        break;
+                    }
+                case 11:
                     exit_code = complexity_analysis();
                     break;
             }
