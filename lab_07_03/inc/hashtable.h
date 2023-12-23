@@ -73,6 +73,7 @@ string_t *hashtable_find_oa(hashtable_oa_t *hashtable, char *string);
 string_t *hashtable_delete_oa(hashtable_oa_t *hashtable, char *string);
 void hashtable_free_oa(hashtable_oa_t *hashtable_oa);
 void hashtable_delete_by_letter_oa(hashtable_oa_t *hashtable_oa, char letter);
+int hashtable_oa_count_records(hashtable_oa_t *hashtable_oa);
 
 /*
 External Chaining
@@ -85,6 +86,7 @@ int hashtable_restructure_ec(hashtable_ec_t *hashtable_ec, int new_capacity);
 node_ht_t *hashtable_find_ec(hashtable_ec_t *hashtable_ec, char *string);
 node_ht_t *hashtable_delete_ec(hashtable_ec_t *hashtable_ec, char *string);
 void hashtable_delete_by_letter_ec(hashtable_ec_t *hashtable_ec, char letter);
+int hashtable_ec_count_records(hashtable_ec_t *hashtable_ec);
 
 void linked_list_append(node_ht_t **head, node_ht_t *new_node, int *list_length);
 void linked_list_free(node_ht_t **head);

@@ -163,6 +163,20 @@ void hashtable_free_oa(hashtable_oa_t *hashtable_oa)
     free(hashtable_oa->hashtable_arr);
 }
 
+int hashtable_oa_count_records(hashtable_oa_t *hashtable_oa)
+{
+    if (!hashtable_oa)
+        return 0;
+    
+    int count = 0;
+    for (int i = 0; i < hashtable_oa->capacity; i++)
+    {
+        if (hashtable_oa->hashtable_arr[i])
+            count++;
+    }
+    return count;
+}
+
 /*
 ===== External chaining =====
 */
@@ -360,6 +374,24 @@ void hashtable_print_ec(hashtable_ec_t *hashtable_ec)
     printf("\tEND\n");
 }
 
+int hashtable_ec_count_records(hashtable_ec_t *hashtable_ec)
+{
+    if (!hashtable_ec)
+        return 0;
+
+    int count = 0;
+    for (int i = 0; i < hashtable_ec->capacity; i++)
+    {
+        node_ht_t *current = hashtable_ec->hashtable_ec_arr[i];
+        while (current)
+        {
+            count++;
+            current = current->next;
+        }
+    }
+    return count;
+}
+
 void linked_list_print(node_ht_t *head)
 {
     node_ht_t *current = head;
@@ -411,7 +443,7 @@ int hashtable_oa_init(hashtable_oa_t *hashtable_oa, int capacity, char string_ar
             exit_code = hashtable_insert_oa(hashtable_oa, string_array[i], &iterations, iters_threshold);
             if (exit_code == ERROR_OA_ITERATIONS_OVERFLOW)
             {
-                printf("Restructuring table...\n");
+                // printf("Restructuring table...\n");
                 if (hashtable_restructure_oa(hashtable_oa) != EXIT_SUCCESS)
                     return ERROR_OA_MEMORY_ALLOC;
                 all_elements_inserted = false;
@@ -436,7 +468,7 @@ int hashtable_ec_init(hashtable_ec_t *hashtable_ec, int capacity, char string_ar
             int exit_code = hashtable_insert_ec(hashtable_ec, string_array[i], iters_threshold);
             if (exit_code == ERROR_EC_ITERATIONS_OVERFLOW)
             {
-                printf("Restructuring table...\n");
+                // printf("Restructuring table...\n");
                 int new_capacity = hashtable_ec->capacity * 2;
                 if (hashtable_restructure_ec(hashtable_ec, new_capacity) != EXIT_SUCCESS)
                     return ERROR_EC_MEMORY_ALLOC;

@@ -354,13 +354,21 @@ int main(void)
                     }
                     break;
                 case 9:
-                    exit_code = complexity_analysis();
-                    break;
+                    {
+                        printf("Введите количество максимальных коллизий (1 - 20): ");
+                        exit_code = input_iter_threshold(&iter_threshold);
+                        if (!exit_code)
+                            exit_code = complexity_analysis(iter_threshold);
+                        break;
+                    }
             }
         }
     }
     while (choice != 0 && choice != 9);
     bst_free(root);
+    bst_free(root_avl);
+    hashtable_free_oa(&hashtable_oa);
+    hashtable_free_ec(&hashtable_ec);
     root = NULL;
     return exit_code;
 }
