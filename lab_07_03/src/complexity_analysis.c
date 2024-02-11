@@ -21,7 +21,7 @@ int complexity_analysis(int iter_threshold)
 
     int directories[] = {100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000};
     int percentages[] = {25, 50, 75, 100};
-    int times_n = 10;
+    int times_n = 100;
 
     for (int i = 0; i < DIRECTORIES_N; i++)
     {
@@ -219,16 +219,12 @@ int complexity_analysis(int iter_threshold)
             unsigned long long time_delete_ht_ec = 0;
             for (int k = 0; k < times_n; k++)
             {
-                // Recreate and repopulate the hashtable from string_array
                 hashtable_ec_t hashtable_ec;
                 hashtable_ec_init(&hashtable_ec, string_array_len, string_array, string_array_len, iter_threshold);
-
                 unsigned long long beg_delete_ht_ec = microseconds_now();
                 hashtable_delete_by_letter_ec(&hashtable_ec, 'm');
                 unsigned long long end_delete_ht_ec = microseconds_now();
                 time_delete_ht_ec += end_delete_ht_ec - beg_delete_ht_ec;
-
-                // Free resources and reset the hashtable
                 hashtable_free_ec(&hashtable_ec);
             }
             data_time_delete_ht_ec[i][j] = (double)time_delete_ht_ec / times_n;
@@ -238,12 +234,15 @@ int complexity_analysis(int iter_threshold)
             printf("\t\tВремя удаления на AVL (наносекунды): %f\n", data_time_delete_avl[i][j]);
             printf("\t\tВремя удаления на HT OA (наносекунды): %f\n", data_time_delete_ht_oa[i][j]);
             printf("\t\tВремя удаления на HT EC (наносекунды): %f\n", data_time_delete_ht_ec[i][j]);
-            
-            printf("\t\tВремя поиска на БДП (наносекунды): %f\n", data_time_find_bst[i]);
-            printf("\t\tВремя поиска на AVL (наносекунды): %f\n", data_time_find_avl[i]);
-            printf("\t\tВремя поиска на HT OA (наносекунды): %f\n", data_time_find_ht_oa[i]);
-            printf("\t\tВремя поиска на HT EC (наносекунды): %f\n", data_time_find_ht_ec[i]);
+            bst_free(root);
+            bst_free(root_avl);
+            hashtable_free_ec(&hashtable_ec);
+            hashtable_free_oa(&hashtable_oa);
         }
+        printf("\t\tВремя поиска на БДП (наносекунды): %f\n", data_time_find_bst[i]);
+        printf("\t\tВремя поиска на AVL (наносекунды): %f\n", data_time_find_avl[i]);
+        printf("\t\tВремя поиска на HT OA (наносекунды): %f\n", data_time_find_ht_oa[i]);
+        printf("\t\tВремя поиска на HT EC (наносекунды): %f\n", data_time_find_ht_ec[i]);
     }
     return EXIT_SUCCESS;
 }
