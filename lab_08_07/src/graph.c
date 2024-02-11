@@ -143,11 +143,11 @@ void graph_to_dot(FILE *file, matrix_t *graph)
 
     for (i = 0; i < graph->vertices_n; i++)
     {
-        for (j = i + 1; j < graph->vertices_n; j++)
+        for (j = 0; j < graph->vertices_n; j++)
         {
             if (graph->matrix[i][j] != 0)
             {
-                fprintf(file, "    \"%d\" -- \"%d\" [label=\"%d\"];\n", i, j, graph->matrix[i][j]);
+                fprintf(file, "    \"%d\" -> \"%d\" [label=\"%d\"];\n", i, j, graph->matrix[i][j]);
             }
         }
     }
@@ -158,7 +158,7 @@ Format .gv file for Graphviz
 */
 void graphviz_format(FILE *file, matrix_t *graph)
 {
-    fprintf(file, "graph G {\n");
+    fprintf(file, "digraph G {\n");
     graph_to_dot(file, graph);
     fprintf(file, "}\n");
 }
